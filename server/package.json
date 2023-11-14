@@ -1,0 +1,42 @@
+{
+  "author": "zLey-Santos",
+  "dependencies": {
+    "better-sqlite3": "^8.6.0",
+    "body-parser": "^1.20.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "express-validator": "^7.0.1",
+    "multer": "^1.4.5-lts.1",
+    "prompt-sync": "^4.2.0",
+    "react-star-ratings": "^2.3.0",
+    "react-zorm": "^0.9.0",
+    "reflect-metadata": "^0.1.13",
+    "routing-controllers": "^0.10.4",
+    "zod": "^3.22.2"
+  },
+  "description": "Criando uma api com express banco de dados em SQLite",
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.10",
+    "@types/node": "^20.7.1",
+    "@types/react": "^18.2.23",
+    "nodemon": "^3.0.1",
+    "typescript": "^5.2.2"
+  },
+  "license": "ISC",
+  "main": "index.ts",
+  "name": "nodejs",
+  "scripts": {
+    "dev": "nodemon --watch src/**/*.ts --exec ts-node src/index.ts",
+    "seed:friend": "node src/friend/friend.seed.ts",
+    "seed:post": "node src/post/post.seed.ts",
+    "seed:user": "node src/user/user.seed.ts"
+  },
+  "version": "1.0.0"
+}
