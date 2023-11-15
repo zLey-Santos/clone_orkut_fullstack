@@ -1,5 +1,5 @@
-import * as postService from "./post.service";
-import * as userService from "../user/user.service";
+import * as postService from "./post.repository";
+import * as userService from "../user/user.repository";
 import { faker } from "@faker-js/faker";
 
 const defaultLimit = 100;

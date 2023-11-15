@@ -1,4 +1,4 @@
-import * as userService from "../user/user.service";
+import * as userService from "../user/user.repository";
 
 const minFriendsCount = 12;
 const friendsRange = 15;

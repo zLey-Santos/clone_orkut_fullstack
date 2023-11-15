@@ -14,7 +14,7 @@ const app = createExpressServer({
   controllers: [PostController, UserController]
 });
 
-function handleErrorMiddleware(err, req, res, next) {
+function handleErrorMiddleware(err: any, req: any, res: any, next: any) {
   if (err instanceof ZodError) {
     console.error(err);
     return res.status(422).json(err);
