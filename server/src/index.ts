@@ -5,13 +5,13 @@ import "dotenv/config";
 import { createExpressServer } from "routing-controllers";
 import { ZodError } from "zod";
 import { PostController } from "./post/post.controller";
-import { userController } from "./user/user.controller";
+import { UserController } from "./user/user.controller";
 
 const port = 9000;
 const host = "localhost";
 const app = createExpressServer({
   cors: true,
-  controllers: [PostController]
+  controllers: [PostController, UserController]
 });
 
 function handleErrorMiddleware(err, req, res, next) {
@@ -24,7 +24,6 @@ function handleErrorMiddleware(err, req, res, next) {
 }
 
 app.use(handleErrorMiddleware);
-app.use("/users", userController);
 
 app.listen(port, host, () => {
   console.log(`Servidor express iniciado em http://${host}:${port}`);

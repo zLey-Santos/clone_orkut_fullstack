@@ -1,0 +1,8 @@
+{
+  "execMap": {
+    "ts": "node --loader ts-node/esm -r tsconfig-paths/register"
+  },
+  "ext": "ts",
+  "ignore": [],
+  "watch": ["src"]
+}

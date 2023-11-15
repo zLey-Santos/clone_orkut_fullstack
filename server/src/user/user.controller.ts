@@ -1,16 +1,17 @@
-import express from "express";
 import * as userService from "./user.service";
+import { JsonController, Get, Param } from "routing-controllers";
 
-export const userController = express.Router();
+@JsonController("/users")
+export class UserController {
+  @Get("/:userId")
+  async getByd(@Param("userId") userId: number) {
+    const user = await userService.readUser(userId);
+    return user;
+  }
 
-userController.get("/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  const user = await userService.readUser(userId);
-  res.status(200).json(user);
-});
-
-userController.get("/:userId/friends", async (req, res) => {
-  const userId = req.params.userId;
-  const friends = await userService.listLatestFriends(userId);
-  res.status(200).json(friends);
-});
+  @Get("/:userId/friends")
+  async listLatestFriends(@Param("userId") userId: number) {
+    const friends = await userService.listLatestFriends(userId);
+    return friends;
+  }
+}
