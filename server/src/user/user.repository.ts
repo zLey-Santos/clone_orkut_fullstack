@@ -1,37 +1,33 @@
 import { createUserSchema } from "./schemas/create-user.schema";
 import { db } from "../db";
+import { prisma } from "prisma";
 
 export class UserRepository {
   async createUser(data: any) {
     await createUserSchema.parseAsync(data);
-    const user = db
-      .prepare(
-        /* sql */
-        `insert into users(
-           first_name,
-           last_name,
-           avatar,
-           passwd
-         ) values(?, ?, ?, ?) returning *`
-      )
-      .get(data.first_name, data.last_name, data.avatar, data.password);
+    const user = await prisma.users.create({ data });
     return user;
   }
 
   async readUser(id: number) {
-    const user = db.prepare(/* sql */ `select * from users where id=?`).get(id);
+    const user = await prisma.users.findFirst({
+      where: { id }
+    });
     return user;
   }
 
   async listUsers() {
-    const users = db.prepare(/* sql */ `select * from users`).all();
-    return users;
+    const user = await prisma.users.findMany();
+    return user;
   }
 
-  async addFriend(userA: number, userB: number) {
-    const friend = db
-      .prepare(/* sql */ `insert into friends (user_a, user_b) values (?, ?) returning *`)
-      .get(userA, userB);
+  async addFriend(user_a: number, user_b: number) {
+    const friend = await prisma.friends.create({
+      data: {
+        user_a,
+        user_b
+      }
+    });
     return friend;
   }
 
@@ -40,16 +36,13 @@ export class UserRepository {
       .prepare(
         /* sql */
         `select * from users where id in (
-          select user_b
-          from friends
-          where user_a = ?
-          union
-          select user_a
-          from friends
-          where user_b = ?
-        )
-        order by created_at desc
-        limit 9;`
+        select user_b
+        from friends
+        where user_a = ?
+        union
+        select user_a
+        from friends
+        where user_b = ?)order by created_at desclimit 9;`
       )
       .all(userId, userId);
     return friends;
