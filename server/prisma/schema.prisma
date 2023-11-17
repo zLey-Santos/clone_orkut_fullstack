@@ -40,7 +40,6 @@ model users {
   last_name                     String
   avatar                        String
   passwd                        String
-  idade                         Int?
   created_at                    DateTime?  @default(now())
   comments                      comments[]
   friends_friends_user_bTousers friends[]  @relation("friends_user_bTousers")

@@ -42,8 +42,8 @@ export function PostPageRoute() {
             <div className="flex items-center gap-2">
               <Link to={`/perfil/${post.user_id}`}>
                 <img
-                  src={post.user_avatar}
-                  alt={`Foto de ${post.user_first_name} ${post.user_last_name}`}
+                  src={post.users.avatar}
+                  alt={`Foto de ${post.users.first_name} ${post.users.last_name}`}
                   className="w-[48px] h-[48px] rounded-full"
                 />
               </Link>
@@ -52,7 +52,7 @@ export function PostPageRoute() {
                   to={`/perfil/${post.user_id}`}
                   className="text-sky-600 hover:text-sky-800 hover:underline font-bold"
                 >
-                  {post.user_first_name} {post.user_last_name}
+                  {post.users.first_name} {post.users.last_name}
                 </Link>
                 <span className="text-sm text-gray-500">
                   {new Date(post.created_at).toLocaleDateString()}
