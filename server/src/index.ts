@@ -1,9 +1,6 @@
-import "express-async-errors";
 import "reflect-metadata";
-
 import "dotenv/config";
 import { createExpressServer } from "routing-controllers";
-import { ZodError } from "zod";
 import { PostController } from "./post/post.controller";
 import { UserController } from "./user/user.controller";
 
@@ -13,17 +10,6 @@ const app = createExpressServer({
   cors: true,
   controllers: [PostController, UserController]
 });
-
-function handleErrorMiddleware(err: any, req: any, res: any, next: any) {
-  if (err instanceof ZodError) {
-    console.error(err);
-    return res.status(422).json(err);
-  }
-
-  throw err;
-}
-
-app.use(handleErrorMiddleware);
 
 app.listen(port, host, () => {
   console.log(`Servidor express iniciado em http://${host}:${port}`);

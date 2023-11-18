@@ -1,9 +1,8 @@
-import { createUserSchema } from "./schemas/create-user.schema";
 import { prisma } from "../prisma";
+import type { CreateUserDto } from "./dtos/create-user.dto";
 
 export class UserRepository {
-  async createUser(data: any) {
-    await createUserSchema.parseAsync(data);
+  async createUser(data: CreateUserDto) {
     const user = await prisma.users.create({
       data: {
         first_name: data.first_name,
@@ -16,15 +15,20 @@ export class UserRepository {
   }
 
   async readUser(userId: number) {
-    const user = await prisma.users.findUnique({
-      where: { id: userId }
-    });
-    return user;
+    try {
+      const user = await prisma.users.findUnique({
+        where: { id: userId }
+      });
+      return user;
+    } catch (error) {
+      console.error("Error in readUser:", error);
+      throw error;
+    }
   }
 
   async listUsers() {
-    const user = await prisma.users.findMany();
-    return user;
+    const users = await prisma.users.findMany();
+    return users;
   }
 
   async addFriend(user_a: number, user_b: number) {
@@ -38,31 +42,30 @@ export class UserRepository {
   }
 
   async listLatestFriends(userId: number) {
-    const friends = await prisma.$queryRaw`
-    select * from users where id in ( 
-      select user_b
-      from friends
-      where user_a = ?
-      union
-      select user_a
-      from friends
-      where user_b = ?) order by created_at desc limit 9;`;
-    return friends;
+    try {
+      const friends = await prisma.$queryRaw`
+        select * from users where id in ( 
+          select user_b
+          from friends
+          where user_a = ${userId}
+          union
+          select user_a
+          from friends
+          where user_b = ${userId}) order by created_at desc limit 9;`;
+      return friends;
+    } catch (error) {
+      console.error("Error in listLatestFriends:", error);
+      throw error;
+    }
   }
 }
 
-export function listUsers() {
-  throw new Error("Function not implemented.");
+export async function listUsers() {
+  const userRepository = new UserRepository();
+  return userRepository.listUsers();
 }
 
-export function addFriend(userA: any, userB: any) {
-  throw new Error("Function not implemented.");
+export async function addFriend(userA: number, userB: number) {
+  const userRepository = new UserRepository();
+  return userRepository.addFriend(userA, userB);
 }
-/*  async getRandomUser() {
-    const randomUser = prisma.$queryRaw`select * from users order by random() limit 1`;
-    return randomUser;
-  }
-}
-export function createUser(userData: { first_name: string; last_name: string; avatar: string; password: string }) {
-  throw new Error("Function not implemented.");
-} */

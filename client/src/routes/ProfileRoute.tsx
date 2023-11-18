@@ -73,9 +73,14 @@ function FriendsCard({ id }) {
   const [friends, setFriends] = useState(initialFriends);
 
   async function loadFriends() {
-    const response = await api.get(`/users/${id}/friends`);
-    const friends = response.data;
-    setFriends(friends);
+    try {
+      const response = await api.get(`/users/${id}/friends`);
+      const friends = response.data;
+      setFriends(friends);
+    } catch (error) {
+      console.error("Error loading friends:", error);
+      // Adicione aqui a lógica para lidar com o erro, como exibir uma mensagem de erro na interface do usuário.
+    }
   }
 
   useEffect(() => {

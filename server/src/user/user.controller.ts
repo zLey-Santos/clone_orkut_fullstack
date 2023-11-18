@@ -1,5 +1,6 @@
 import { UserRepository } from "./user.repository";
-import { JsonController, Get, Param } from "routing-controllers";
+import { JsonController, Get, Post, Param, Body } from "routing-controllers";
+import { CreateUserDto } from "./dtos/create-user.dto";
 
 @JsonController("/:userId")
 export class UserController {
@@ -8,6 +9,12 @@ export class UserController {
   }
 
   userRepository: UserRepository;
+
+  @Post()
+  async createUser(@Body() body: CreateUserDto) {
+    const user = await this.userRepository.createUser(body);
+    return user;
+  }
 
   @Get("/:userId")
   async getById(@Param("userId") userId: number) {
