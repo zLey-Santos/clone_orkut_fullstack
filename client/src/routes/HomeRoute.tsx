@@ -117,7 +117,7 @@ export function HomeRoute() {
               <Link to={`/perfil/${post.user_id}`}>
                 <img
                   src={post.users.avatar}
-                  alt={`Foto de ${post.users.last_name} ${post.users.last_name}`}
+                  alt={`Foto de ${post.users.first_name} ${post.users.last_name}`}
                   className='w-[48px] h-[48px] rounded-full'
                 />
               </Link>
@@ -126,7 +126,7 @@ export function HomeRoute() {
                   to={`/perfil/${post.user_id}`}
                   className='text-sky-600 hover:text-sky-800 hover:underline font-bold'
                 >
-                  {post.users.last_name} {post.users.last_name}
+                  {post.users.first_name} {post.users.last_name}
                 </Link>
                 <span className='text-sm text-gray-500'>
                   {new Date(post.created_at).toLocaleDateString()}

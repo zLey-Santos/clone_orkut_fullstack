@@ -7,17 +7,13 @@ type LinkButtonProps = {
   onClick?: () => void;
 };
 
-export function LinkButton({
-  children,
-  to,
-  className,
-  onClick,
-}: LinkButtonProps) {
+export function LinkButton({ children, to, className, onClick }: LinkButtonProps) {
   return (
     <Link
       onClick={onClick}
       to={to}
-      className={`bg-sky-400 hover:bg-sky-600 text-slate-50 font-bold uppercase py-1 px-3 rounded-md ${className}`}>
+      className={`bg-[#EF0092] hover:[#ef0093a5] text-white font-bold uppercase mr-3 py-1
+      px-3 rounded-md hover:text-black ${className}`}>
       {children}
     </Link>
   );

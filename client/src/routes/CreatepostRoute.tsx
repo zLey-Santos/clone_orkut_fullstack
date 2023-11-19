@@ -37,7 +37,7 @@ export function CreatePostRoute() {
         console.error("Ocorreu um erro ao criar sua publicação:", error);
         toast("Ocorreu um erro ao criar a sua publicação. :(");
       }
-    },
+    }
   });
 
   // Função para obter a classe CSS com base nos erros do Zorm
@@ -52,7 +52,7 @@ export function CreatePostRoute() {
   const [content, setContent] = useState("");
 
   // Função para lidar com o envio do formulário
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     try {
@@ -62,7 +62,7 @@ export function CreatePostRoute() {
       // Se os dados forem inválidos, exiba uma mensagem de erro
       console.error(error);
     }
-  }
+  };
 
   return (
     <Card>
@@ -72,14 +72,10 @@ export function CreatePostRoute() {
       <Breadcrumbs
         links={[
           { href: "/", label: "Home" },
-          { href: "", label: "Criar publicação" },
+          { href: "", label: "Criar publicação" }
         ]}
       />
-      <form
-        onSubmit={handleSubmit}
-        ref={zo.ref}
-        className="flex flex-col gap-2 m-2 md:max-w-screen-md md:mx-auto"
-      >
+      <form onSubmit={handleSubmit} ref={zo.ref} className="flex flex-col gap-2 m-2 md:max-w-screen-md md:mx-auto">
         <h1 className="text-center font-bold text-2xl">Criar publicação</h1>
 
         <div className="flex flex-col">

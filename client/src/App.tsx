@@ -8,6 +8,7 @@ import { Footer } from "./components/FooterComponent";
 import { EditPostRoute } from "./routes/EditPostRoute";
 import { PostPageRoute } from "./routes/PostPageRoute";
 import { ProfileRoute } from "./routes/ProfileRoute";
+import { SignInRoute } from "./routes/SignInRoute";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/not-found-page" element={<NotFoundPage />} />
           <Route path="/posts/:page" element={<PostPageRoute />} />
           <Route path="/perfil/:id" element={<ProfileRoute />} />
+          <Route path="/sign-in" element={<SignInRoute />} />
         </Routes>
         <Footer className={"flex justify-end items-center gap-2  bg-[#222]"} />
       </div>
