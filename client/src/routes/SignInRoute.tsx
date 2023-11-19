@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { TextField } from "../components/TextField";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Importa os ícones do React
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const initialForm = {
   email: "",
