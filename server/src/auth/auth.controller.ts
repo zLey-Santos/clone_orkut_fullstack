@@ -1,4 +1,4 @@
-import { JsonController, Post, Body } from "routing-controllers";
+import { JsonController, Post, Body, Get, Authorized, CurrentUser } from "routing-controllers";
 import { SignInDto } from "./dto/sign-in.dto";
 import { AuthService } from "./auth.service";
 
@@ -16,7 +16,11 @@ export class AuthController {
   }
 
   @Post("/sign-up")
-  async signUp(@Body() signUpDto: SignInDto) {
-    return SignInDto;
+  async signUp() {}
+
+  @Authorized()
+  @Get("/session")
+  async session(@CurrentUser() user: object) {
+    return user;
   }
 }

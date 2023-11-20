@@ -2,6 +2,7 @@ import { prisma } from "../prisma";
 import type { CreateUserDto } from "./dtos/create-user.dto";
 
 export class UserRepository {
+  static findByEmail: any;
   async createUser(data: CreateUserDto) {
     const user = await prisma.users.create({
       data: {
