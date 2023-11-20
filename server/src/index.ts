@@ -3,12 +3,13 @@ import "dotenv/config";
 import { createExpressServer } from "routing-controllers";
 import { PostController } from "./post/post.controller";
 import { UserController } from "./user/user.controller";
+import { AuthController } from "auth/auth.controller";
 
-const port = 9000;
-const host = "localhost";
+const port = process.env.PORT;
+const host = process.env.HOST;
 const app = createExpressServer({
   cors: true,
-  controllers: [PostController, UserController]
+  controllers: [PostController, UserController, AuthController]
 });
 
 app.listen(port, host, () => {

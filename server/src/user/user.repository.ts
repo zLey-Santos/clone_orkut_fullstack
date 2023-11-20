@@ -7,6 +7,7 @@ export class UserRepository {
       data: {
         first_name: data.first_name,
         last_name: data.last_name,
+        email: data.email,
         avatar: data.avatar,
         passwd: data.password
       }
@@ -23,6 +24,17 @@ export class UserRepository {
     } catch (error) {
       console.error("Error in readUser:", error);
       throw error;
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      const user = await prisma.users.findUnique({
+        where: { email }
+      });
+      return user;
+    } catch (error) {
+      console.error("E-mail invalid", error);
     }
   }
 

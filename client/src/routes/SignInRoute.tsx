@@ -3,6 +3,7 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { TextField } from "../components/TextField";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { api } from "../api";
 
 const initialForm = {
   email: "",
@@ -13,10 +14,9 @@ export function SignInRoute() {
   const [form, setForm] = useState(initialForm);
   const [showPassword, setShowPassword] = useState(false);
 
-  function submitForm(event: React.FormEvent<HTMLFormElement>) {
+  async function submitForm(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    alert(`email:${form.email} password:${form.password}`);
+    const response = await api.post("/auth/sign-in", form);
   }
 
   return (
