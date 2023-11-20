@@ -4,6 +4,7 @@ import { Button } from "../components/Button";
 import { TextField } from "../components/TextField";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { api } from "../api";
+import { TokenStorage } from "./tokenStorage";
 
 const initialForm = {
   email: "",
@@ -17,6 +18,11 @@ export function SignInRoute() {
   async function submitForm(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const response = await api.post("/auth/sign-in", form);
+    if (response === undefined) {
+      return;
+    }
+    const token = response.data.token;
+    TokenStorage.setToken(token);
   }
 
   return (
