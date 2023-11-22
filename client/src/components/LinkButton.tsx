@@ -12,7 +12,7 @@ export function LinkButton({ children, to, className, onClick }: LinkButtonProps
     <Link
       onClick={onClick}
       to={to}
-      className={`bg-[#EF0092] hover:[#ef0093a5] text-white font-bold uppercase mr-3 py-1
+      className={`bg-[#EF0092] hover:[#ef0093a5] text-white font-bold uppercase mr-3 p-2
       px-3 rounded-md hover:text-black ${className}`}>
       {children}
     </Link>

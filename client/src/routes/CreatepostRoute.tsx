@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useZorm } from "react-zorm";
 import toast from "react-simple-toasts";
@@ -96,7 +96,9 @@ export function CreatePostRoute() {
           ))}
         </div>
 
-        <Button type="submit">Criar publicação</Button>
+        <Button type="submit" typeClass="submit">
+          Criar publicação
+        </Button>
       </form>
     </Card>
   );

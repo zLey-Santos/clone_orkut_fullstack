@@ -1,22 +1,23 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
+export { TokenExpiredError } from "jsonwebtoken";
 import type { Request } from "express";
-import { Action } from "routing-controllers";
 
 export class JwtService {
-  static extractTokenFromHeader(action: Action, request: any) {
-    throw new Error("Method not implemented.");
+  constructor() {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (jwtSecret === undefined) {
+      throw new EmptyJwtError();
+    }
+
+    this.jwtSecret = jwtSecret;
   }
+
   private jwtSecret: string;
 
-  constructor() {
-    this.jwtSecret = process.env.JWT_SECRET || "";
-    if (!this.jwtSecret) {
-      throw new EmptyJwtError("Falha");
-    }
-  }
-
-  encode(payload: object) {
-    const token = jwt.sign(payload, this.jwtSecret);
+  encode(payload: Object) {
+    const token = jwt.sign(payload, this.jwtSecret, {
+      expiresIn: "7d"
+    });
     return token;
   }
 
@@ -28,16 +29,18 @@ export class JwtService {
   extractTokenFromHeader(request: Request) {
     const authorizationHeader = request.headers.authorization;
     if (authorizationHeader === undefined) {
-      throw new invalidHeaderError();
+      throw new InvalidAuthorizationHeaderError();
     }
-    const [bearer, token] = authorizationHeader.split("");
+
+    const [bearer, token] = authorizationHeader.split(" ");
     if (bearer !== "Bearer" || token.length < 1) {
-      throw new invalidHeaderError();
+      throw new InvalidAuthorizationHeaderError();
     }
+
     const payload = this.decode(token);
     return payload;
   }
 }
 
 export class EmptyJwtError extends Error {}
-export class invalidHeaderError extends Error {}
+export class InvalidAuthorizationHeaderError extends Error {}

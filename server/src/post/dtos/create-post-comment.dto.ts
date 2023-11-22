@@ -1,8 +1,12 @@
 import { MinLength, MaxLength, IsInt, IsOptional } from "class-validator";
 
-export class CreatePostCommentsDto {
-  @MinLength(4, { message: "O conteúdo precisa ter pelo menos 16 caracteres" })
-  @MaxLength(96, { message: "O conteúdo precisa ter no máximo 270 caracteres" })
+export class CreatePostCommentDto {
+  @MinLength(4, {
+    message: "O conteúdo precisa ter pelo menos 4 caracteres"
+  })
+  @MaxLength(96, {
+    message: "O conteúdo precisa ter no máximo 96 caracteres"
+  })
   message: string;
 
   @IsInt()

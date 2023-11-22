@@ -1,42 +1,40 @@
 import { prisma } from "../prisma";
+import bcrypt from "bcrypt";
 import type { CreateUserDto } from "./dtos/create-user.dto";
 
 export class UserRepository {
-  static findByEmail: any;
   async createUser(data: CreateUserDto) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(data.password, salt);
+
     const user = await prisma.users.create({
       data: {
         first_name: data.first_name,
         last_name: data.last_name,
-        email: data.email,
-        avatar: data.avatar,
-        passwd: data.password
+        avatar: data.avatar ?? "/client/src/assets/img-fiveIcons/orkut.png",
+        passwd: hash,
+        email: data.email
       }
     });
     return user;
   }
 
   async readUser(userId: number) {
-    try {
-      const user = await prisma.users.findUnique({
-        where: { id: userId }
-      });
-      return user;
-    } catch (error) {
-      console.error("Error in readUser:", error);
-      throw error;
-    }
+    const user = await prisma.users.findUnique({
+      where: {
+        id: userId
+      }
+    });
+    return user;
   }
 
   async findByEmail(email: string) {
-    try {
-      const user = await prisma.users.findUnique({
-        where: { email }
-      });
-      return user;
-    } catch (error) {
-      console.error("E-mail invalid", error);
-    }
+    const user = await prisma.users.findUnique({
+      where: {
+        email
+      }
+    });
+    return user;
   }
 
   async listUsers() {
@@ -44,41 +42,41 @@ export class UserRepository {
     return users;
   }
 
-  async addFriend(user_a: number, user_b: number) {
+  async addFriend(userA: number, userB: number) {
     const friend = await prisma.friends.create({
       data: {
-        user_a,
-        user_b
+        user_a: userA,
+        user_b: userB
       }
     });
     return friend;
   }
 
   async listLatestFriends(userId: number) {
-    try {
-      const friends = await prisma.$queryRaw`
-        select * from users where id in ( 
+    const friends = await prisma.$queryRaw/* sql */ `
+        select * from users where id in (
           select user_b
           from friends
           where user_a = ${userId}
           union
           select user_a
           from friends
-          where user_b = ${userId}) order by created_at desc limit 9;`;
-      return friends;
-    } catch (error) {
-      console.error("Error in listLatestFriends:", error);
-      throw error;
-    }
+          where user_b = ${userId}
+        )
+        order by created_at desc
+        limit 9;`;
+    return friends;
   }
-}
 
-export async function listUsers() {
-  const userRepository = new UserRepository();
-  return userRepository.listUsers();
-}
-
-export async function addFriend(userA: number, userB: number) {
-  const userRepository = new UserRepository();
-  return userRepository.addFriend(userA, userB);
+  async updateAvatar(userId: number, avatar: string) {
+    const user = await prisma.users.update({
+      where: {
+        id: userId
+      },
+      data: {
+        avatar
+      }
+    });
+    return user;
+  }
 }

@@ -1,10 +1,21 @@
 import { prisma } from "../prisma";
+import { UnauthorizedError } from "routing-controllers";
 import type { CreatePostDto } from "./dtos/create-post.dto";
 import type { UpdatePostDto } from "./dtos/update-post.dto";
-import type { CreatePostCommentsDto } from "./dtos/create-post-comment.dto";
+import type { CreatePostCommentDto } from "./dtos/create-post-comment.dto";
 
 export class PostRepository {
-  async listPosts({ limit, offset, orderBy, search }: any) {
+  async listPosts({
+    limit,
+    offset,
+    orderBy,
+    search
+  }: {
+    limit: number;
+    offset: number;
+    orderBy: "asc" | "desc";
+    search?: string;
+  }) {
     const posts = await prisma.posts.findMany({
       select: {
         id: true,
@@ -19,8 +30,16 @@ export class PostRepository {
           }
         }
       },
-      where: search ? { content: { contains: search } } : undefined,
-      orderBy: { created_at: orderBy },
+      where: search
+        ? {
+            content: {
+              contains: search
+            }
+          }
+        : undefined,
+      orderBy: {
+        created_at: orderBy
+      },
       take: limit,
       skip: offset
     });
@@ -53,20 +72,39 @@ export class PostRepository {
   }
 
   async updatePost(postId: number, data: UpdatePostDto) {
+    const maybePost = await prisma.posts.findUnique({
+      where: {
+        id: postId,
+        user_id: data.user_id
+      }
+    });
+
+    if (maybePost === null) {
+      throw new UnauthorizedError("Você precisa ser o dono da publicação para editá-la. GOTCHA!");
+    }
+
     const post = await prisma.posts.update({
-      where: { id: postId },
-      data: { content: data.content }
+      data: {
+        content: data.content
+      },
+      where: {
+        id: postId
+      }
     });
     return post;
   }
 
   async deletePost(postId: number) {
-    const post = await prisma.posts.delete({ where: { id: postId } });
+    const post = await prisma.posts.delete({
+      where: {
+        id: postId
+      }
+    });
     return post;
   }
 
   async listPostComments(postId: number) {
-    const comment = await prisma.comments.findMany({
+    const comments = await prisma.comments.findMany({
       select: {
         id: true,
         message: true,
@@ -80,23 +118,18 @@ export class PostRepository {
           }
         }
       },
-      where: { post_id: postId },
-      orderBy: { created_at: "desc" }
+      where: {
+        post_id: postId
+      },
+      orderBy: {
+        created_at: "desc"
+      }
     });
-    return comment;
+
+    return comments;
   }
 
-  async createPostComment(postId: number, data: CreatePostCommentsDto) {
-    // Certifique-se de que post_id está definido antes de criar o comentário
-    if (!postId) {
-      throw new Error("post_id não pode ser undefined ou null.");
-    }
-
-    // Certifique-se de que user_id está definido antes de criar o comentário
-    if (!data.user_id) {
-      throw new Error("user_id não pode ser undefined ou null.");
-    }
-
+  async createPostComment(postId: number, data: CreatePostCommentDto) {
     const comment = await prisma.comments.create({
       data: {
         message: data.message,

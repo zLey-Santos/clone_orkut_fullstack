@@ -13,14 +13,14 @@ const texts = {
   contentPlaceholder: "Edite a sua publicação",
   submit: "Enviar",
   submitSuccess: "Sua publicação foi editada com sucesso!",
-  submitFailure: "Houve um erro ao editar a sua publicação.",
+  submitFailure: "Houve um erro ao editar a sua publicação."
 };
 
 export function EditPostRoute() {
   const params = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    content: "",
+    content: ""
   });
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export function EditPostRoute() {
     // Atualiza o estado "formData" quando o conteúdo do Textarea é alterado
     setFormData({
       ...formData,
-      content: e.target.value,
+      content: e.target.value
     });
   };
 
@@ -99,7 +99,7 @@ export function EditPostRoute() {
           {/* Exibe o Textarea para edição de conteúdo da postagem */}
         </div>
         <div className="flex justify-end items-center px-2">
-          <Button type="submit" className="bg-yellow-500 hover:bg-yellow-600">
+          <Button type="submit" typeClass="edit">
             {texts.submit}
           </Button>
           {/* Renderiza um botão de envio do formulário */}

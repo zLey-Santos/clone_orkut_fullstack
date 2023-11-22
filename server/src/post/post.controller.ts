@@ -1,8 +1,21 @@
-import { JsonController, Get, Post, QueryParam, Param, Body, HttpCode, Delete, Put } from "routing-controllers";
+import type { User } from "../user/user.types";
+import {
+  JsonController,
+  Get,
+  Post,
+  Delete,
+  Put,
+  QueryParam,
+  Param,
+  Body,
+  HttpCode,
+  Authorized,
+  CurrentUser
+} from "routing-controllers";
 import { PostRepository } from "./post.repository";
 import { CreatePostDto } from "./dtos/create-post.dto";
 import { UpdatePostDto } from "./dtos/update-post.dto";
-import { CreatePostCommentsDto } from "./dtos/create-post-comment.dto"; // Corrected typo in the import
+import { CreatePostCommentDto } from "./dtos/create-post-comment.dto";
 
 @JsonController("/posts")
 export class PostController {
@@ -19,7 +32,12 @@ export class PostController {
     @QueryParam("order_by") orderBy: string = "desc",
     @QueryParam("search") search: string
   ) {
-    const posts = await this.postRepository.listPosts({ limit, offset, orderBy, search });
+    const posts = await this.postRepository.listPosts({
+      limit,
+      offset,
+      orderBy: orderBy as "asc" | "desc",
+      search
+    });
     return posts;
   }
 
@@ -29,21 +47,26 @@ export class PostController {
     return post;
   }
 
+  @Authorized()
   @HttpCode(201)
   @Post()
-  async createPost(@Body() body: CreatePostDto) {
+  async createPost(@Body() body: CreatePostDto, @CurrentUser() user: User) {
+    body.user_id = user.id;
     const post = await this.postRepository.createPost(body);
     return post;
   }
 
+  @Authorized()
   @Delete("/:id")
-  async deleteById(@Param("id") postId: number) {
+  async deleteById(@Param("id") postId: number, @CurrentUser() user: User) {
     const post = await this.postRepository.deletePost(postId);
     return post;
   }
 
+  @Authorized()
   @Put("/:id")
-  async updateById(@Param("id") postId: number, @Body() body: UpdatePostDto) {
+  async updateById(@Param("id") postId: number, @Body() body: UpdatePostDto, @CurrentUser() user: User) {
+    body.user_id = user.id;
     const post = await this.postRepository.updatePost(postId, body);
     return post;
   }
@@ -54,10 +77,12 @@ export class PostController {
     return comments;
   }
 
+  @Authorized()
   @HttpCode(201)
   @Post("/:id/comments")
-  async createPostComments(@Param("id") postId: number, @Body() body: CreatePostCommentsDto) {
-    const comments = await this.postRepository.createPostComment(postId, body);
-    return comments;
+  async createPostComment(@Param("id") postId: number, @Body() body: CreatePostCommentDto, @CurrentUser() user: User) {
+    body.user_id = user.id;
+    const comment = await this.postRepository.createPostComment(postId, body);
+    return comment;
   }
 }

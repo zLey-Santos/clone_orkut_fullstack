@@ -17,7 +17,7 @@ import { DEFAULT_USER_ID } from "../defaltUserId.ts";
 const texts = {
   commentsTitle: "Comentário",
   commentsSendButton: "Comentar",
-  starRatingButton: "Classificar",
+  starRatingButton: "Classificar"
 };
 
 // Define o estado inicial para uma postagem
@@ -30,12 +30,11 @@ const initialPostState: IPost = {
   user_id: 0,
   users: {
     avatar: "",
-    last_name: "",
+    last_name: ""
   },
   users_avatar: "",
   users_last_name: ""
 };
-
 
 // Define os estados iniciais para comentários
 const initialComments = [];
@@ -48,7 +47,7 @@ export function ViewPostRoute() {
   const [comments, setComments] = useState(initialComments);
   const [comment, setComment] = useState(initialComment);
   const [errors, setErrors] = useState({
-    message: "",
+    message: ""
   });
 
   // Função assíncrona para buscar dados da postagem e seus comentários
@@ -56,7 +55,7 @@ export function ViewPostRoute() {
     try {
       const [postResponse, commentsResponse] = await Promise.all([
         api.get(`/posts/${params.id}`),
-        api.get(`/posts/${params.id}/comments`),
+        api.get(`/posts/${params.id}/comments`)
       ]);
       setPost(postResponse.data);
       setComments(commentsResponse.data);
@@ -77,7 +76,7 @@ export function ViewPostRoute() {
     try {
       const commentData = {
         message: comment,
-        user_id: DEFAULT_USER_ID,
+        user_id: DEFAULT_USER_ID
       };
 
       const validationResult = createPostCommentSchema.safeParse(commentData);
@@ -127,12 +126,7 @@ export function ViewPostRoute() {
         <Helmet>
           <title>{postTitleId}</title>
         </Helmet>
-        <Breadcrumbs
-          links={[
-            { href: "/", label: "Home" },
-            { label: `Ver publicação #${params.id}` },
-          ]}
-        />
+        <Breadcrumbs links={[{ href: "/", label: "Home" }, { label: `Ver publicação #${params.id}` }]} />
 
         <div className="flex justify-end gap-3">
           {/* Botão para editar a postagem */}
@@ -149,9 +143,7 @@ export function ViewPostRoute() {
         </div>
 
         <div className="text-gray-500 mb-2 ">#{post.id}</div>
-        <div className="text-gray-500 ">
-          {new Date(post.created_at).toLocaleDateString()}
-        </div>
+        <div className="text-gray-500 ">{new Date(post.created_at).toLocaleDateString()}</div>
 
         <p className={"break-words"}>{post.content}</p>
       </Card>
@@ -169,16 +161,13 @@ export function ViewPostRoute() {
             onChange={(event) => setComment(event.target.value)}
             defaultValue={undefined}
           />
-          {errors.message && (
-            <div className="text-red-500">{errors.message}</div>
-          )}
+          {errors.message && <div className="text-red-500">{errors.message}</div>}
           <div className="flex justify-end mt-2">
             {/* Botão para enviar o comentário */}
             <Button
               className="bg-sky-500 mb-2 uppercase mr-3 font-bold hover:bg-sky-700 "
               typeClass="edit"
               type="submit">
-
               {texts.commentsSendButton}
             </Button>
           </div>
@@ -199,20 +188,17 @@ export function ViewPostRoute() {
                 <div className="flex flex-col">
                   <Link
                     to={`/perfil/${comment.user_id}`}
-                    className="text-sky-600 hover:text-sky-800 hover:underline font-bold"
-                  >
+                    className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                     {comment.users.first_name} {comment.users.last_name}
                   </Link>
-                  <span className="text-sm text-gray-500">
-                    #{comment.user_id}
-                  </span>
+                  <span className="text-sm text-gray-500">#{comment.user_id}</span>
                   <span className="text-sm text-gray-500">
                     {new Date(comment.created_at).toLocaleDateString("pt-BR", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",
                       hour: "2-digit",
-                      minute: "2-digit",
+                      minute: "2-digit"
                     })}
                     h
                   </span>
