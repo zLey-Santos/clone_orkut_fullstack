@@ -1,4 +1,14 @@
 {
+  "builds": [
+    {
+      "src": "/cliente/**",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "/server/**",
+      "use": "@vercel/node"
+    }
+  ],
   "dependencies": {
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
@@ -37,6 +47,23 @@
   "homepage": "./",
   "name": "clone-orkut-fullstack-react-typescript",
   "private": true,
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "dest": "/cliente/$1",
+      "src": "/cliente/(.*)"
+    },
+    {
+      "dest": "/server/$1",
+      "src": "/server/(.*)"
+    },
+    {
+      "dest": "/server/$1",
+      "src": "/(.*)"
+    }
+  ],
   "scripts": {
     "build": "tsc && vite build",
     "dev": "vite",
