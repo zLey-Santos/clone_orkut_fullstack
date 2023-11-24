@@ -11,7 +11,7 @@ export class UserRepository {
       data: {
         first_name: data.first_name,
         last_name: data.last_name,
-        avatar: data.avatar ?? "/client/src/assets/img-fiveIcons/orkut.png",
+        avatar: data.avatar ?? "/default-avatar.png",
         passwd: hash,
         email: data.email
       }

@@ -46,12 +46,12 @@ export function SignInRoute() {
       <Card>
         <h2 className="text-center text-2xl mb-3">Entrar na sua conta</h2>
         <form onSubmit={submitForm} className="flex flex-col gap-2 w-full">
-          <TextField value={form.email} whenChanges={(email) => setForm({ ...form, email })} defaultText="Email" />
+          <TextField value={form.email} onChange={(email) => setForm({ ...form, email })} defaultText="Email" />
           <div className="relative">
             <TextField
               type={showPassword ? "text" : "password"}
               value={form.password}
-              whenChanges={(password) => setForm({ ...form, password })}
+              onChange={(password) => setForm({ ...form, password })}
               defaultText="Senha"
             />
             <button type="button" className="absolute right-2 top-6" onClick={() => setShowPassword(!showPassword)}>

@@ -59,18 +59,18 @@ export function SignUpRoute() {
         <form onSubmit={submitForm} className="flex flex-col gap-2 w-full">
           <TextField
             value={form.first_name}
-            whenChanges={(first_name) => setForm({ ...form, first_name })}
+            onChange={(first_name) => setForm({ ...form, first_name })}
             defaultText="Nome"
           />
           <TextField
             value={form.last_name}
-            whenChanges={(last_name) => setForm({ ...form, last_name })}
+            onChange={(last_name) => setForm({ ...form, last_name })}
             defaultText="Sobrenome"
           />
-          <TextField value={form.email} whenChanges={(email) => setForm({ ...form, email })} defaultText="Email" />
+          <TextField value={form.email} onChange={(email) => setForm({ ...form, email })} defaultText="Email" />
           <TextField
             value={form.password}
-            whenChanges={(password) => setForm({ ...form, password })}
+            onChange={(password) => setForm({ ...form, password })}
             defaultText="Senha"
             type="password"
           />
