@@ -1,9 +1,11 @@
-Projeto Orkut - Migrando para SQLite
+Projeto Orkut - Migrando para MySQL
 
 Nome: Wesley Santos
 
-Turma:
-Bootcamp Desenvolvedor Web Full Stack | [1T23] Noite
-@INFNET-BCLFST00C1-N2-L2
+Instruções Necessárias:
+    Para instalar as dependências, execute o comando: npm install
 
-Link do repositório projeto no GitHub:
+Scripts:
+    Para iniciar o servidor Front-End: npm run dev
+
+    Para iniciar o servidor Back-End: npm run dev
