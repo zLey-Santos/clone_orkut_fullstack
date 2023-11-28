@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-simple-toasts";
 import { Helmet } from "react-helmet";
@@ -27,7 +27,7 @@ export function UpdateProfileRoute() {
     setEmail(user.email);
   }, [user]);
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event) {
     event.preventDefault();
 
     if ((password || confirmPassword) && password !== confirmPassword) {
@@ -39,18 +39,25 @@ export function UpdateProfileRoute() {
       return;
     }
 
-    const user = {
+    const updatedUser = {
       first_name: name,
       last_name: surname,
       email,
       password: password || undefined
     };
 
-    const response = await api.patch("/users/update-myself", user);
-    if (response !== undefined) {
+    try {
+      const response = await api.patch("/users/update-myself", updatedUser);
       setUser(response.data);
       toast("Perfil alterado com sucesso!");
       navigate("/usuario");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast("Erro ao atualizar o perfil. Por favor, tente novamente.", {
+        render(message) {
+          return <div className="p-2 rounded-md text-gray-100 bg-red-500">{message}</div>;
+        }
+      });
     }
   }
 
@@ -77,19 +84,21 @@ export function UpdateProfileRoute() {
         <Button type="submit" typeClass="submit">
           Enviar
         </Button>
-        <h2 className="font-bold text-xl mt-4">Segurança (atualizar senha)</h2>
 
-        <PasswordField type="password" defaultText={"Nova senha"} value={password} onChange={setPassword} />
-        <PasswordField
-          type="password"
-          defaultText="Confirmar senha"
-          value={confirmPassword}
-          onChange={setConfirmPassword}
-        />
+        <div className="mt-4">
+          <h2 className="font-bold text-xl">Segurança (atualizar senha)</h2>
+          <PasswordField type="password" defaultText="Nova senha" value={password} onChange={setPassword} />
+          <PasswordField
+            type="password"
+            defaultText="Confirmar senha"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+          />
 
-        <Button type="submit" typeClass="submit">
-          Alterar agora
-        </Button>
+          <Button type="submit" typeClass="submit">
+            Alterar agora
+          </Button>
+        </div>
       </form>
     </Card>
   );

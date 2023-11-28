@@ -28,11 +28,14 @@ const initialPost = {
 export function EditPostRoute() {
   const params = useParams();
   const navigate = useNavigate();
-  const [initialFormState, setInitialFormState] = useState(initialPost);
+  const [content, setContent] = useState("");
+
   const zo = useZorm("edit-post", PostSchema, {
     async onValidSubmit(event) {
       event.preventDefault();
-      const response = await api.put(`/posts/${params.id}`, event.data);
+      const response = await api.put(`/posts/${params.id}`, {
+        content: content
+      });
       if (response.data.id) {
         toast(texts.submitSuccess);
         navigate(`/ver-publicacao/${params.id}`);
@@ -42,12 +45,12 @@ export function EditPostRoute() {
     }
   });
 
-  async function loadPost() {
-    const response = await api.get(`/posts/${params.id}`);
-    setInitialFormState(response.data);
-  }
-
   useEffect(() => {
+    async function loadPost() {
+      const response = await api.get(`/posts/${params.id}`);
+      setContent(response.data.content);
+    }
+
     loadPost();
   }, [params.id]);
 
@@ -79,7 +82,8 @@ export function EditPostRoute() {
             placeholder={texts.contentPlaceholder}
             name={zo.fields.content()}
             rows={3}
-            defaultValue={initialFormState.content}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
           />
           {zo.errors.content((error) => (
             <ErrorMessage>{error.message}</ErrorMessage>

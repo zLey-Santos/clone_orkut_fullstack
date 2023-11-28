@@ -13,7 +13,7 @@ export class PostService {
     const oldPost = await this.postRepository.readPost(postId);
 
     if (oldPost?.user_id !== userId) {
-      throw new UnauthorizedError("Você precisa ser o dono da publicação para deletá-la. GOTCHA!");
+      throw new UnauthorizedError("Você não pode deletar essa publicação.");
     }
 
     const post = await this.postRepository.deletePost(postId);
@@ -24,7 +24,7 @@ export class PostService {
     const oldPost = await this.postRepository.readPost(postId);
 
     if (oldPost?.user_id !== data.user_id) {
-      throw new UnauthorizedError("Você precisa ser o dono da publicação para editá-la. GOTCHA!");
+      throw new UnauthorizedError("Você não pode editar essa publicação.");
     }
 
     const post = await this.postRepository.updatePost(postId, data);

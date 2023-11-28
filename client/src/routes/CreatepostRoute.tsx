@@ -1,5 +1,5 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useZorm } from "react-zorm";
 import toast from "react-simple-toasts";
 import { Helmet } from "react-helmet";
 import { Button } from "../components/Button";
@@ -8,18 +8,32 @@ import { Breadcrumbs } from "../components/Breadcrumbs";
 import { Card } from "../components/Card";
 import { api } from "../api";
 import { PostSchema } from "../postSchema";
+import { useZorm } from "react-zorm";
 
 export function CreatePostRoute() {
   const navigate = useNavigate();
+
   const zo = useZorm("create-post", PostSchema, {
     async onValidSubmit(event) {
       event.preventDefault();
-      const response = await api.post("/posts", event.data);
-      if (response.data.id) {
-        toast("Sua publicação foi criada com sucesso!");
-        navigate("/");
-      } else {
-        toast("Houve um erro ao criar a sua publicação. :(");
+
+      const toastOptions = {
+        duration: 5000, // ajuste a duração conforme necessário
+        type: "success" // ou "error" dependendo do estilo desejado
+      };
+
+      try {
+        const response = await api.post("/posts", event.data);
+
+        if (response.data.id) {
+          toast("Sua publicação foi criada com sucesso!", toastOptions);
+          navigate("/");
+        } else {
+          throw new Error("Erro ao criar a publicação.");
+        }
+      } catch (error) {
+        console.error("Erro ao criar a publicação:", error);
+        toast("Houve um erro ao criar a sua publicação. :(", toastOptions);
       }
     }
   });

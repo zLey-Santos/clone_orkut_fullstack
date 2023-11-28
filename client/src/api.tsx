@@ -6,6 +6,14 @@ import { useGlobalStore } from "./useGlobalStore";
 
 const { setIsLoading, setUser } = useGlobalStore.getState();
 
+const showErrorToast = (message) => {
+  toast(message, {
+    render(message) {
+      return <div className="p-2 rounded-md text-gray-100 bg-red-500">{message}</div>;
+    }
+  });
+};
+
 export const api = axios.create({
   baseURL: "http://localhost:9000"
 });
@@ -26,40 +34,38 @@ api.interceptors.response.use(
   },
   (error) => {
     setIsLoading(false);
-    if (error.response.status === 401) {
-      const token = TokenStorage.getToken();
-      if (token) {
-        TokenStorage.removeToken();
-        setUser({
-          id: 0,
-          first_name: "",
-          last_name: "",
-          email: "",
-          avatar: ""
-        });
-        toast("Sua sessão expirou. Por favor, entre novamente.");
-        globalNavigate.navigate("/entrar");
-        return;
+    if (error.response) {
+      const status = error.response.status;
+
+      if (status === 401) {
+        const token = TokenStorage.getToken();
+        if (token) {
+          TokenStorage.removeToken();
+          setUser({
+            id: 0,
+            first_name: "",
+            last_name: "",
+            email: "",
+            avatar: ""
+          });
+          showErrorToast("Sua sessão expirou. Por favor, entre novamente.");
+          globalNavigate.navigate("/entrar");
+          return Promise.resolve(); // Evita que o erro seja propagado
+        }
+      }
+
+      if (status >= 400) {
+        if (error.response.data.errors) {
+          const errors = error.response.data.errors.map((issue) => Object.values(issue.constraints).at(0));
+          errors.forEach(showErrorToast);
+        } else if (error.response.data.message) {
+          showErrorToast(error.response.data.message);
+        } else {
+          showErrorToast("Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.");
+        }
       }
     }
 
-    if (error.response.data.errors && error.response.status >= 400) {
-      const errors = error.response.data.errors.map((issue) => Object.values(issue.constraints).at(0));
-      errors.forEach((error) =>
-        toast(error, {
-          render(message) {
-            return <div className="p-2 rounded-md text-gray-100 bg-red-500">{message}</div>;
-          }
-        })
-      );
-    } else if (error.response.data.message && error.response.status >= 400) {
-      toast(error.response.data.message, {
-        render(message) {
-          return <div className="p-2 rounded-md text-gray-100 bg-red-500">{message}</div>;
-        }
-      });
-    } else {
-      throw error;
-    }
+    return Promise.reject(error);
   }
 );

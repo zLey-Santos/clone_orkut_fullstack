@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-simple-toasts";
 import { Helmet } from "react-helmet";
 import { api } from "../api";
@@ -31,7 +31,7 @@ const initialPost = {
 const initialComments = [];
 const initialComment = "";
 
-export function ViewPostRoute() {
+export const ViewPostRoute = () => {
   const isAuthorized = useGlobalStore((state) => state.isAuthorized);
   const user = useGlobalStore((state) => state.user);
   const params = useParams();
@@ -90,10 +90,7 @@ export function ViewPostRoute() {
         <Breadcrumbs
           links={[
             { href: "/", label: "Home" },
-            {
-              href: `/ver-publicacao/${params.id}`,
-              label: `Ver publicação #${params.id}`
-            }
+            { href: `/ver-publicacao/${params.id}`, label: `Ver publicação #${params.id}` }
           ]}
         />
         {isAuthorized && user.id === post.user_id && (
@@ -111,7 +108,7 @@ export function ViewPostRoute() {
         )}
         <div className="flex items-center gap-2">
           <Link to={`/perfil/${post.user_id}`}>
-            <img
+            <ImagemComponent
               src={post.users.avatar}
               alt={`Foto de ${post.users.first_name} ${post.users.last_name}`}
               className="w-[48px] h-[48px] rounded-full"
@@ -149,11 +146,11 @@ export function ViewPostRoute() {
         {!isAuthorized && (
           <div className="my-4">
             <p>
-              Para comentar, você deve <></>
-              <Link to="/entrar " className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
-                entrar <></>
-              </Link>
-              ou <></>
+              Para comentar, você deve{" "}
+              <Link to="/entrar" className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
+                entrar
+              </Link>{" "}
+              ou{" "}
               <Link to="/criar-conta" className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                 criar uma conta
               </Link>
@@ -177,7 +174,6 @@ export function ViewPostRoute() {
                     className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                     {comment.users.first_name} {comment.users.last_name}
                   </Link>
-
                   <span className="text-sm text-sky-700 font-bold">
                     {new Date(comment.created_at).toLocaleDateString()}
                   </span>
@@ -192,4 +188,4 @@ export function ViewPostRoute() {
       </Card>
     </>
   );
-}
+};

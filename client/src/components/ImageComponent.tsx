@@ -1,7 +1,7 @@
 interface ImgProps {
   src: string;
   alt: string;
-  className: string;
+  className?: string;
 }
 
 export const ImagemComponent = ({ src, alt, className }: ImgProps) => {

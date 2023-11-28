@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useGlobalStore } from "../useGlobalStore";
 import { api } from "../api";
@@ -25,32 +25,51 @@ export function ProfileRoute() {
   const [user, setUser] = useState({ ...initialUser, id: userId });
   const [isFriend, setIsFriend] = useState(null as null | boolean);
 
-  async function loadUser() {
-    const response = await api.get(`/users/${userId}`);
-    const user = response.data;
-    setUser(user);
-  }
-
-  async function checkIsFriend() {
-    const response = await api.get(`/users/check-is-friend/${userId}`);
-    setIsFriend(response.data.isFriend);
-  }
-
-  async function addFriend() {
-    const response = await api.post(`/users/add-friend/${user.id}`);
-    if (response !== undefined) {
-      toast("Amigo adicionado com sucesso!");
-      setIsFriend(true);
+  const loadUser = async () => {
+    try {
+      const response = await api.get(`/users/${userId}`);
+      const userData = response.data;
+      setUser(userData);
+    } catch (error) {
+      console.error("Error loading user:", error);
     }
-  }
+  };
 
-  async function removeFriend() {
-    const response = await api.post(`/users/remove-friend/${user.id}`);
-    if (response !== undefined) {
-      toast("Amigo removido com sucesso!");
-      setIsFriend(false);
+  const checkIsFriend = async () => {
+    try {
+      const response = await api.get(`/users/check-is-friend/${userId}`);
+      setIsFriend(response.data.isFriend);
+    } catch (error) {
+      console.error("Error checking friend status:", error);
+      // Handle error checking friend status
     }
-  }
+  };
+
+  const addFriend = async () => {
+    try {
+      const response = await api.post(`/users/add-friend/${user.id}`);
+      if (response !== undefined) {
+        toast("Amigo adicionado com sucesso!");
+        setIsFriend(true);
+      }
+    } catch (error) {
+      console.error("Error adding friend:", error);
+      // Handle error adding friend
+    }
+  };
+
+  const removeFriend = async () => {
+    try {
+      const response = await api.post(`/users/remove-friend/${user.id}`);
+      if (response !== undefined) {
+        toast("Amigo removido com sucesso!");
+        setIsFriend(false);
+      }
+    } catch (error) {
+      console.error("Error removing friend:", error);
+      // Handle error removing friend
+    }
+  };
 
   useEffect(() => {
     loadUser();

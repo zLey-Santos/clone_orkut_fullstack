@@ -1,3 +1,5 @@
+// post.controller.ts
+
 import type { User } from "../user/user.types";
 import {
   JsonController,
@@ -10,7 +12,8 @@ import {
   Body,
   HttpCode,
   Authorized,
-  CurrentUser
+  CurrentUser,
+  HttpError
 } from "routing-controllers";
 import { PostRepository } from "./post.repository";
 import { PostService } from "./post.service";
@@ -20,13 +23,7 @@ import { CreatePostCommentDto } from "./dtos/create-post-comment.dto";
 
 @JsonController("/posts")
 export class PostController {
-  constructor() {
-    this.postRepository = new PostRepository();
-    this.postService = new PostService();
-  }
-
-  postRepository: PostRepository;
-  postService: PostService;
+  constructor(private postRepository: PostRepository, private postService: PostService) {}
 
   @Get()
   async getAll(
@@ -47,6 +44,9 @@ export class PostController {
   @Get("/:id")
   async getById(@Param("id") postId: number) {
     const post = await this.postRepository.readPost(postId);
+    if (!post) {
+      throw new HttpError(404, "Post not found");
+    }
     return post;
   }
 
@@ -54,24 +54,40 @@ export class PostController {
   @HttpCode(201)
   @Post()
   async createPost(@Body() body: CreatePostDto, @CurrentUser() user: User) {
-    body.user_id = user.id;
-    const post = await this.postRepository.createPost(body);
-    return post;
+    try {
+      body.user_id = user.id;
+      const post = await this.postRepository.createPost(body);
+      return post;
+    } catch (error) {
+      console.error("Error creating post:", error);
+      throw new HttpError(500, "Error creating post");
+    }
   }
 
   @Authorized()
   @Delete("/:id")
   async deleteById(@Param("id") postId: number, @CurrentUser() user: User) {
     const post = await this.postService.deletePost(postId, user.id);
+    if (!post) {
+      throw new HttpError(404, "Post not found");
+    }
     return post;
   }
 
   @Authorized()
   @Put("/:id")
   async updateById(@Param("id") postId: number, @Body() body: UpdatePostDto, @CurrentUser() user: User) {
-    body.user_id = user.id;
-    const post = await this.postService.updatePost(postId, body);
-    return post;
+    try {
+      body.user_id = user.id;
+      const post = await this.postService.updatePost(postId, body);
+      if (!post) {
+        throw new HttpError(404, "Post not found");
+      }
+      return post;
+    } catch (error) {
+      console.error("Error updating post:", error);
+      throw new HttpError(500, "Error updating post");
+    }
   }
 
   @Get("/:id/comments")
@@ -84,8 +100,16 @@ export class PostController {
   @HttpCode(201)
   @Post("/:id/comments")
   async createPostComment(@Param("id") postId: number, @Body() body: CreatePostCommentDto, @CurrentUser() user: User) {
-    body.user_id = user.id;
-    const comment = await this.postRepository.createPostComment(postId, body);
-    return comment;
+    try {
+      body.user_id = user.id;
+      const comment = await this.postRepository.createPostComment(postId, body);
+      if (!comment) {
+        throw new HttpError(404, "Post not found");
+      }
+      return comment;
+    } catch (error) {
+      console.error("Error creating post comment:", error);
+      throw new HttpError(500, "Error creating post comment");
+    }
   }
 }

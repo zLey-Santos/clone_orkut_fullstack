@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { LinkButton } from "../components/LinkButton";
@@ -22,19 +22,19 @@ export function HomeRoute() {
   const pages = new Array(pageCount).fill(null).map((_, index) => index + 1);
 
   async function loadPosts() {
-    const response = await api.get(`/posts`, {
-      params: {
-        search,
-        order_by: orderBy
-      }
-    });
-    const nextPosts = response.data;
-    setPostsList(nextPosts);
+    try {
+      const response = await api.get("/posts", {
+        params: {
+          search,
+          order_by: orderBy
+        }
+      });
+      const nextPosts = response.data;
+      setPostsList(nextPosts);
+    } catch (error) {
+      console.error("Error loading posts:", error);
+    }
   }
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
 
   useEffect(() => {
     loadPosts();
@@ -62,9 +62,10 @@ export function HomeRoute() {
           <option value="asc">Mais antigas</option>
         </select>
       </div>
-      {postsList.posts.length === 0 && "Nenhum resultado encontrado"}
-      {postsList.posts.map((post) => {
-        return (
+      {postsList.posts.length === 0 ? (
+        <div>Nenhum resultado encontrado</div>
+      ) : (
+        postsList.posts.map((post) => (
           <div key={post.id} className="border-b py-2">
             <div className="flex items-center gap-2">
               <Link to={`/perfil/${post.user_id}`}>
@@ -89,17 +90,17 @@ export function HomeRoute() {
             <Card>
               <p className="mt-3">{post.content}</p>
               <div className="mt-2 flex justify-end">
-                <LinkButton to={`/ver-publicacao/${post.id}`} typeClass={"listComment"}>
-                  Listar comentarios
+                <LinkButton to={`/ver-publicacao/${post.id}`} typeClass="listComment">
+                  Listar comentários
                 </LinkButton>
               </div>
             </Card>
           </div>
-        );
-      })}
-      <div className="flex flex-row gap-2 flex-wrap mt-3 ">
+        ))
+      )}
+      <div className="flex flex-row gap-2 flex-wrap mt-3">
         {pages.map((page) => (
-          <LinkButton key={page} to={`/publicacoes/${page}`} typeClass={"default"}>
+          <LinkButton key={page} to={`/publicacoes/${page}`} typeClass="default">
             {page}
           </LinkButton>
         ))}
