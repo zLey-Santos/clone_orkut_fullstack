@@ -7,8 +7,8 @@ import { useGlobalStore } from "../useGlobalStore";
 import { Card } from "../components/Card";
 import { Title } from "../components/Title";
 import { Button } from "../components/Button";
-import { LinkButton } from "../components/LinkButton";
 import { Breadcrumbs } from "../components/Breadcrumbs";
+import { ImagemComponent } from "../components/ImageComponent";
 
 const texts = {
   commentsTitle: "Comentários",
@@ -98,12 +98,15 @@ export function ViewPostRoute() {
         />
         {isAuthorized && user.id === post.user_id && (
           <div className="flex gap-2">
-            <Button className="bg-red-500 hover:bg-red-700" onClick={deletePost}>
+            <Button typeClass="danger" className="bg-red-500 hover:bg-red-700 my-2" onClick={deletePost}>
               Deletar
             </Button>
-            <LinkButton className="bg-amber-500 hover:bg-amber-700" to={`/editar-publicacao/${params.id}`}>
+            <Button
+              typeClass="edit"
+              className="bg-amber-500 hover:bg-amber-700 mt-2 my-5"
+              to={`/editar-publicacao/${params.id}`}>
               Editar
-            </LinkButton>
+            </Button>
           </div>
         )}
         <div className="flex items-center gap-2">
@@ -115,15 +118,15 @@ export function ViewPostRoute() {
             />
           </Link>
           <div className="flex flex-col">
-            <Link
-              to={`/perfil/${post.user_id}`}
-              className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+            <Link to={`/perfil/${post.user_id}`} className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
               {post.users.first_name} {post.users.last_name}
             </Link>
-            <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
+            <span className="text-sm text-sky-700 font-bold">{new Date(post.created_at).toLocaleDateString()}</span>
           </div>
         </div>
-        <p>{post.content}</p>
+        <Card>
+          <p>{post.content}</p>
+        </Card>
       </Card>
       <Card>
         <Title>{texts.commentsTitle}</Title>
@@ -132,27 +135,28 @@ export function ViewPostRoute() {
             <textarea
               placeholder="Digite o seu comentário"
               rows={3}
-              className={`rounded-lg px-2 py-1 border focus:border-green-500 outline-none resize-none w-full`}
+              className={`rounded-lg px-2 py-1 border focus:border-sky-500 outline-none resize-none w-full`}
               value={comment}
               onChange={(event) => setComment(event.target.value)}
             />
             <div className="flex justify-end mt-2">
-              <Button type="submit">{texts.commentsSendButton}</Button>
+              <Button type="submit" typeClass="submit">
+                {texts.commentsSendButton}
+              </Button>
             </div>
           </form>
         )}
         {!isAuthorized && (
           <div className="my-4">
             <p>
-              Para comentar, você deve{" "}
+              Para comentar, você deve
               <Link to="/entrar" className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
                 entrar
-              </Link>{" "}
-              ou{" "}
+              </Link>
+              ou
               <Link to="/criar-conta" className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
                 criar uma conta
               </Link>
-              .
             </p>
           </div>
         )}
@@ -161,7 +165,7 @@ export function ViewPostRoute() {
             <div key={comment.id} className="border-b py-2">
               <div className="flex items-center gap-2">
                 <Link to={`/perfil/${comment.user_id}`}>
-                  <img
+                  <ImagemComponent
                     src={comment.users.avatar}
                     alt={`Foto de ${comment.users.first_name} ${comment.users.last_name}`}
                     className="w-[48px] h-[48px] rounded-full"
@@ -170,10 +174,12 @@ export function ViewPostRoute() {
                 <div className="flex flex-col">
                   <Link
                     to={`/perfil/${comment.user_id}`}
-                    className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+                    className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                     {comment.users.first_name} {comment.users.last_name}
                   </Link>
-                  <span className="text-sm text-gray-500">{new Date(comment.created_at).toLocaleDateString()}</span>
+                  <span className="text-sm text-sky-700 font-bold">
+                    {new Date(comment.created_at).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
               <p>{comment.content}</p>

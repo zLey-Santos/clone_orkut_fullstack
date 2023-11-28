@@ -42,10 +42,10 @@ export function CreatePostRoute() {
         <h1 className="text-center font-bold text-2xl">Criar publicação</h1>
         <div className="flex flex-col">
           <textarea
-            placeholder="Digite a sua publicação"
+            placeholder="Em Que Estás a Pensar?"
             rows={3}
             name={zo.fields.content()}
-            className={`rounded-lg px-2 py-1 border focus:border-green-500 outline-none resize-none w-full ${zo.errors.content(
+            className={`rounded-lg px-2 py-1 border focus:border-sky-500 outline-none resize-none w-full ${zo.errors.content(
               "border-red-500 focus:border-red-600"
             )}`}
           />
@@ -53,7 +53,9 @@ export function CreatePostRoute() {
             <ErrorMessage>{error.message}</ErrorMessage>
           ))}
         </div>
-        <Button type="submit">Enviar</Button>
+        <Button type="submit" typeClass="submit">
+          Enviar
+        </Button>
       </form>
     </Card>
   );

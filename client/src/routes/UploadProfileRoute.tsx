@@ -74,7 +74,9 @@ export function UpdateProfileRoute() {
         <TextField value={surname} onChange={setSurname} defaultText="Sobrenome" />
         <TextField value={email} type="email" onChange={setEmail} defaultText="Email" />
 
-        <Button type="submit">Enviar</Button>
+        <Button type="submit" typeClass="submit">
+          Enviar
+        </Button>
         <h2 className="font-bold text-xl mt-4">Segurança (atualizar senha)</h2>
         <TextField value={password} type="password" onChange={setPassword} defaultText="Senha" />
         <TextField
@@ -83,7 +85,9 @@ export function UpdateProfileRoute() {
           onChange={setConfirmPassword}
           defaultText="Confirmar senha"
         />
-        <Button type="submit">Alterar agora</Button>
+        <Button type="submit" typeClass="submit">
+          Alterar agora
+        </Button>
       </form>
     </Card>
   );

@@ -77,21 +77,29 @@ export function HomeRoute() {
               <div className="flex flex-col">
                 <Link
                   to={`/perfil/${post.user_id}`}
-                  className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+                  className="my-1 text-sky-600 hover:text-sky-800 hover:underline font-bold">
                   {post.users.first_name} {post.users.last_name}
                 </Link>
-                <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
+                <span className="text-sm mb-2 font-bold text-sky-800">
+                  {new Date(post.created_at).toLocaleDateString()}
+                </span>
               </div>
             </div>
-            <Link to={`/ver-publicacao/${post.id}`} className="cursor-pointer block">
-              <p>{post.content}</p>
-            </Link>
+
+            <Card>
+              <p className="mt-3">{post.content}</p>
+              <div className="mt-2 flex justify-end">
+                <LinkButton to={`/ver-publicacao/${post.id}`} typeClass={"listComment"}>
+                  Listar comentarios
+                </LinkButton>
+              </div>
+            </Card>
           </div>
         );
       })}
-      <div className="flex flex-row gap-2 flex-wrap pt-4">
+      <div className="flex flex-row gap-2 flex-wrap mt-3 ">
         {pages.map((page) => (
-          <LinkButton key={page} to={`/publicacoes/${page}`}>
+          <LinkButton key={page} to={`/publicacoes/${page}`} typeClass={"default"}>
             {page}
           </LinkButton>
         ))}

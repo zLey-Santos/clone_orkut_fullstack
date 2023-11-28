@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet";
 import { LinkButton } from "../components/LinkButton";
 import { Card } from "../components/Card";
 import { api } from "../api";
+import { ImagemComponent } from "../components/ImageComponent";
 
 const pageSize = 30;
 
@@ -44,33 +45,42 @@ export function PostPageRoute() {
           <div key={post.id} className="border-b py-2">
             <div className="flex items-center gap-2">
               <Link to={`/perfil/${post.user_id}`}>
-                <img
+                <ImagemComponent
                   src={post.users.avatar}
                   alt={`Foto de ${post.users.first_name} ${post.users.last_name}`}
                   className="w-[48px] h-[48px] rounded-full"
                 />
               </Link>
+
               <div className="flex flex-col">
                 <Link
                   to={`/perfil/${post.user_id}`}
-                  className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+                  className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                   {post.users.first_name} {post.users.last_name}
                 </Link>
-                <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
+                <span className="text-sm mb-2 font-bold text-sky-800">
+                  {new Date(post.created_at).toLocaleDateString()}
+                </span>
               </div>
             </div>
-            <Link to={`/ver-publicacao/${post.id}`} className="cursor-pointer block">
-              <p>{post.content}</p>
-            </Link>
+            <Card>
+              <p className="mt-3">{post.content}</p>
+              <div className="mt-2 flex justify-end">
+                <LinkButton to={`/ver-publicacao/${post.id}`} typeClass={"listComment"}>
+                  Listar comentarios
+                </LinkButton>
+              </div>
+            </Card>
           </div>
         );
       })}
       <div className="flex flex-row gap-2 flex-wrap pt-4">
         {pages.map((page) => (
           <LinkButton
+            typeClass="default"
             key={page}
             to={`/publicacoes/${page}`}
-            className={page === parseInt(params.page) ? "bg-gree-700" : ""}>
+            className={page === parseInt(params.page) ? "default" : ""}>
             {page}
           </LinkButton>
         ))}

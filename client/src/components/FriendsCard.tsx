@@ -29,7 +29,7 @@ export function FriendsCard({ id }) {
             </Link>
             <Link
               to={`/perfil/${friend.id}`}
-              className="text-blue-600 hover:text-blue-700 font-bold text-sm hover:underline leading-tight">
+              className="text-sky-600 hover:text-sky-700 font-bold text-sm hover:underline leading-tight">
               {friend.first_name}
             </Link>
           </div>

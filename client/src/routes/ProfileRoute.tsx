@@ -72,12 +72,12 @@ export function ProfileRoute() {
           {isFriend !== null && (
             <div className="flex gap-2 mb-2">
               {isFriend === false && (
-                <Button onClick={addFriend} className="bg-pink-500 hover:bg-pink-600">
+                <Button onClick={addFriend} typeClass="submit">
                   Adicionar como amigo
                 </Button>
               )}
               {isFriend === true && (
-                <Button onClick={removeFriend} className="bg-gray-300 hover:bg-gray-400 text-black">
+                <Button onClick={removeFriend} typeClass="submit">
                   Remover amigo
                 </Button>
               )}

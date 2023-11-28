@@ -69,22 +69,25 @@ export function EditPostRoute() {
           }
         ]}
       />
-      <Title className="mb-4 text-center">
+      <Title>
         {texts.title} #{params.id}
       </Title>
-      <form ref={zo.ref} className="flex flex-col gap-3">
+      <form ref={zo.ref} className="flex flex-col gap-3 ">
         <div>
           <textarea
-            className="rounded-lg px-2 py-1 border focus:border-green-500 outline-none w-full resize-none"
+            className="rounded-lg px-2 py-1 mt-4 border focus:border-sky-500 outline-none w-full resize-none"
             placeholder={texts.contentPlaceholder}
             name={zo.fields.content()}
+            rows={3}
             defaultValue={initialFormState.content}
           />
           {zo.errors.content((error) => (
             <ErrorMessage>{error.message}</ErrorMessage>
           ))}
         </div>
-        <Button type="submit">{texts.submit}</Button>
+        <Button type="submit" typeClass="submit">
+          {texts.submit}
+        </Button>
       </form>
     </Card>
   );

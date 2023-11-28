@@ -63,7 +63,9 @@ export function SignUpRoute() {
             defaultText="Senha"
             type="password"
           />
-          <Button type="submit">Enviar</Button>
+          <Button type="submit" typeClass="submit">
+            Enviar
+          </Button>
         </form>
       </Card>
     </div>

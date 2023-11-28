@@ -10,7 +10,8 @@ export function Pagination({ pageCount, currentPage, basePath, onPageChange }) {
           to={`${basePath}/${page}`}
           key={page}
           className={page === currentPage ? "bg-sky-900" : "bg-sky-900"}
-          onClick={() => onPageChange(page)}>
+          onClick={() => onPageChange(page)}
+          typeClass={"default"}>
           {page}
         </LinkButton>
       ))}

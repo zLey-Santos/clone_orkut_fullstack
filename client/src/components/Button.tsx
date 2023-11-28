@@ -4,14 +4,14 @@ type TTypeClass = "default" | "danger" | "edit" | "signIn" | "logout" | "submit"
 
 type ButtonProps = {
   type?: "submit" | "button" | "reset";
-  children: React.ReactNode;
+  children?: React.ReactNode;
   to?: string;
   onClick?: () => void;
   className?: string;
   typeClass?: TTypeClass;
 };
 
-export function Button({ type, children, to, onClick, className = "", typeClass = "default" }: ButtonProps) {
+export function Button({ type, children, to, onClick, className, typeClass = "default" }: ButtonProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -23,7 +23,7 @@ export function Button({ type, children, to, onClick, className = "", typeClass 
   };
 
   const configColor: { [key in TTypeClass]: string } = {
-    default: "bg-sky-500 hover:bg-sky-400",
+    default: "bg-sky-500 hover:bg-sky-400 ",
 
     submit: "bg-sky-500 hover:bg-sky-400 text-white font-bold uppercase mr-3 p-2 px-3 rounded-md hover:text-black ",
 
@@ -36,7 +36,7 @@ export function Button({ type, children, to, onClick, className = "", typeClass 
 
     edit: "text-[#fff] flex justify-center items-center bg-amber-500 py-3 h-2 w-28 rounded-md border-2 border-[#222] hover:bg-amber-700 hover:text-[#222]",
 
-    exit: "text-[#fff] flex justify-center items-center bg-red-500 py-3 h-2 w-28 rounded-md border-2 border-[#222] hover:bg-red-700 hover:text-[#222]"
+    exit: " bg-[#EF0092] hover:[#ef0093a5] text-white font-bold uppercase mr-3 py-2 px-2 rounded-md hover:text-black "
   };
 
   return (

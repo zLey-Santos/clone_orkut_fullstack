@@ -51,7 +51,9 @@ export function SignInRoute() {
             defaultText="Senha"
             type="password"
           />
-          <Button type="submit">Entrar</Button>
+          <Button type="submit" typeClass="submit">
+            Entrar
+          </Button>
         </form>
       </Card>
     </div>

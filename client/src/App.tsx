@@ -11,6 +11,7 @@ import { SignInRoute } from "./routes/SignInRoute";
 import { SignUpRoute } from "./routes/SignUpRoute";
 import { UpdateProfileRoute } from "./routes/UploadProfileRoute";
 import { LoadUser } from "./components/LoadUser";
+import { Footer } from "./components/FooterComponent";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/entrar" element={<SignInRoute />} />
           <Route path="/criar-conta" element={<SignUpRoute />} />
         </Routes>
+        <Footer className={"flex justify-end items-center gap-2  bg-[#222]"} />
       </div>
     </BrowserRouter>
   );
