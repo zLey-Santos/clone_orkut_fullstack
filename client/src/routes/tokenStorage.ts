@@ -1,6 +1,6 @@
 const tokenPath = "token";
 
-export class TokenStorage {
+export abstract class TokenStorage {
   static getToken() {
     return localStorage.getItem(tokenPath);
   }

@@ -1,15 +1,17 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Title } from "../components/Title";
 import { Link } from "react-router-dom";
-import { Card } from "../components/Card";
-import { Pagination } from "../components/pagination"; // Importe o componente de paginação
-import { api } from "../api";
 import { Helmet } from "react-helmet";
+import { LinkButton } from "../components/LinkButton";
+import { Card } from "../components/Card";
+import { api } from "../api";
 
-const pageSize = 10; // Define o número de posts por página
+const pageSize = 30;
+
 const initialPostsList = {
   count: 0,
-  posts: [],
+  posts: []
 };
 
 export function PostPageRoute() {
@@ -17,8 +19,8 @@ export function PostPageRoute() {
   const offset = (parseInt(params.page) - 1) * pageSize;
   const [postsList, setPostsList] = useState(initialPostsList);
   const pageCount = Math.ceil(postsList.count / pageSize);
+  const pages = new Array(pageCount).fill(null).map((_, index) => index + 1);
 
-  // Função assíncrona para carregar os posts da página atual
   async function loadPosts() {
     const response = await api.get(`/posts?limit=${pageSize}&offset=${offset}`);
     const nextPosts = response.data;
@@ -26,16 +28,17 @@ export function PostPageRoute() {
   }
 
   useEffect(() => {
-    // Carrega os posts quando o componente é montado ou quando a página muda
     loadPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.page]);
 
-  // Exibe o número da página atual e o total de páginas no título da página
-  const postPage = `Publicação pág. ${params.page} de ${pageCount}`;
   return (
     <Card>
-      <Helmet><title> {postPage} </title></Helmet>
+      <Helmet>
+        <title>Pagina {params.page} | Posts</title>
+      </Helmet>
+      <Title>
+        Página {params.page} de {pageCount}
+      </Title>
       {postsList.posts.map((post) => {
         return (
           <div key={post.id} className="border-b py-2">
@@ -50,32 +53,28 @@ export function PostPageRoute() {
               <div className="flex flex-col">
                 <Link
                   to={`/perfil/${post.user_id}`}
-                  className="text-sky-600 hover:text-sky-800 hover:underline font-bold"
-                >
+                  className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
                   {post.users.first_name} {post.users.last_name}
                 </Link>
-                <span className="text-sm text-gray-500">
-                  {new Date(post.created_at).toLocaleDateString()}
-                </span>
+                <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
               </div>
             </div>
-            <Link
-              to={`/view-post/${post.id}`}
-              className="cursor-pointer block"
-            >
+            <Link to={`/ver-publicacao/${post.id}`} className="cursor-pointer block">
               <p>{post.content}</p>
             </Link>
           </div>
         );
       })}
-
-      {/* Renderiza o componente de paginação */}
-      <Pagination
-        pageCount={pageCount}
-        currentPage={parseInt(params.page)}
-        basePath="/posts"
-        onPageChange={undefined} // Aqui deve ser fornecida a função para atualizar a página atual
-      />
+      <div className="flex flex-row gap-2 flex-wrap pt-4">
+        {pages.map((page) => (
+          <LinkButton
+            key={page}
+            to={`/publicacoes/${page}`}
+            className={page === parseInt(params.page) ? "bg-gree-700" : ""}>
+            {page}
+          </LinkButton>
+        ))}
+      </div>
     </Card>
   );
 }

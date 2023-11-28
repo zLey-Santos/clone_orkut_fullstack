@@ -4,7 +4,7 @@ import { TokenStorage } from "./tokenStorage";
 import { globalNavigate } from "./globalNavigate";
 import { useGlobalStore } from "./useGlobalStore";
 
-const { setIsLoading } = useGlobalStore.getState();
+const { setIsLoading, setUser } = useGlobalStore.getState();
 
 export const api = axios.create({
   baseURL: "http://localhost:9000"
@@ -30,8 +30,15 @@ api.interceptors.response.use(
       const token = TokenStorage.getToken();
       if (token) {
         TokenStorage.removeToken();
+        setUser({
+          id: 0,
+          first_name: "",
+          last_name: "",
+          email: "",
+          avatar: ""
+        });
         toast("Sua sessão expirou. Por favor, entre novamente.");
-        globalNavigate.navigate("/sign-in");
+        globalNavigate.navigate("/entrar");
         return;
       }
     }

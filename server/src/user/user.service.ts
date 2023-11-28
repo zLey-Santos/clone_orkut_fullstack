@@ -1,3 +1,4 @@
+import { BadRequestError } from "routing-controllers";
 import { UserRepository } from "./user.repository";
 import fs from "fs/promises";
 import sharp from "sharp";
@@ -8,6 +9,28 @@ export class UserService {
   }
 
   userRepository: UserRepository;
+
+  async addFriend(userId: number, friendId: number) {
+    const isFriend = await this.userRepository.checkIsFriend(userId, friendId);
+
+    if (isFriend) {
+      throw new BadRequestError("Você já adicionou esse usuário.");
+    }
+
+    const friend = await this.userRepository.addFriend(userId, friendId);
+    return friend;
+  }
+
+  async removeFriend(userId: number, friendId: number) {
+    const isFriend = await this.userRepository.checkIsFriend(userId, friendId);
+
+    if (!isFriend) {
+      throw new BadRequestError("Você não adicionou esse usuário.");
+    }
+
+    const friend = await this.userRepository.removeFriend(userId, friendId);
+    return friend;
+  }
 
   async uploadAvatar(userId: number, avatar: Express.Multer.File) {
     const avatarBuffer = await sharp(avatar.buffer)

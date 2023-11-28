@@ -1,109 +1,90 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-simple-toasts";
+import { useZorm } from "react-zorm";
 import { Helmet } from "react-helmet";
+import { Title } from "../components/Title";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { PostSchema } from "../postSchema";
+import { Breadcrumbs } from "../components/Breadcrumbs";
 import { api } from "../api";
-import { Textarea } from "../components/TextArea";
-import { PostSchema } from "../postSchema.ts";
 
 const texts = {
   title: "Editar publicação",
-  contentPlaceholder: "Edite a sua publicação",
+  contentPlaceholder: "Digite a sua publicação",
   submit: "Enviar",
   submitSuccess: "Sua publicação foi editada com sucesso!",
-  submitFailure: "Houve um erro ao editar a sua publicação."
+  submitFailure: "Houve um erro ao editar a sua publicação. :("
+};
+
+const initialPost = {
+  id: 0,
+  content: "",
+  created_at: ""
 };
 
 export function EditPostRoute() {
   const params = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    content: ""
-  });
-
-  useEffect(() => {
-    // Carrega os dados da postagem quando o componente é montado
-    async function loadPost() {
-      try {
-        // Faz uma chamada à API para obter os dados da postagem com o ID fornecido
-        const response = await api.get(`/posts/${params.id}`);
-        setFormData(response.data);
-      } catch (error) {
-        console.error("Erro ao carregar a postagem:", error);
-        // Exibe uma mensagem de erro caso ocorra um erro ao carregar a postagem
+  const [initialFormState, setInitialFormState] = useState(initialPost);
+  const zo = useZorm("edit-post", PostSchema, {
+    async onValidSubmit(event) {
+      event.preventDefault();
+      const response = await api.put(`/posts/${params.id}`, event.data);
+      if (response.data.id) {
+        toast(texts.submitSuccess);
+        navigate(`/ver-publicacao/${params.id}`);
+      } else {
         toast(texts.submitFailure);
       }
     }
+  });
 
+  async function loadPost() {
+    const response = await api.get(`/posts/${params.id}`);
+    setInitialFormState(response.data);
+  }
+
+  useEffect(() => {
     loadPost();
   }, [params.id]);
-
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      // Valide o formData com o PostSchema
-      const validationResult = PostSchema.safeParse(formData);
-
-      if (validationResult.success) {
-        // Se a validação for bem-sucedida, envie os dados atualizados da postagem para a API
-        const response = await api.put(`/posts/${params.id}`, formData);
-
-        if (response.data.id) {
-          // Exibe uma mensagem de sucesso e redireciona para a página de visualização da postagem
-          toast(texts.submitSuccess);
-          navigate(`/view-post/${params.id}`);
-        } else {
-          // Exibe uma mensagem de erro se a atualização da postagem falhar
-          toast(texts.submitFailure);
-        }
-      } else {
-        // Se a validação falhar, exiba as mensagens de erro
-        validationResult.error?.issues.forEach((issue) => {
-          toast(issue.message);
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao editar a postagem:", error);
-      // Exibe uma mensagem de erro caso ocorra um erro ao editar a postagem
-      toast(texts.submitFailure);
-    }
-  };
-
-  const handleContentChange = (e) => {
-    // Atualiza o estado "formData" quando o conteúdo do Textarea é alterado
-    setFormData({
-      ...formData,
-      content: e.target.value
-    });
-  };
 
   return (
     <Card>
       <Helmet>
         <title>Editar publicação #{params.id}</title>
       </Helmet>
-      {/* Renderiza um formulário de edição de postagem */}
-      <form onSubmit={handleFormSubmit} className="flex flex-col gap-3">
+      <Breadcrumbs
+        links={[
+          { href: "/", label: "Home" },
+          {
+            href: `/ver-publicacao/${params.id}`,
+            label: `Ver publicação #${params.id}`
+          },
+          {
+            href: `/editar-publicacao/${params.id}`,
+            label: `Editar publicação #${params.id}`
+          }
+        ]}
+      />
+      <Title className="mb-4 text-center">
+        {texts.title} #{params.id}
+      </Title>
+      <form ref={zo.ref} className="flex flex-col gap-3">
         <div>
-          <Textarea
-            className="rounded-lg p-2 border mt-6 focus:border-amber-300 outline-none w-full resize-none"
+          <textarea
+            className="rounded-lg px-2 py-1 border focus:border-green-500 outline-none w-full resize-none"
             placeholder={texts.contentPlaceholder}
-            name="content"
-            value={formData.content}
-            onChange={handleContentChange}
-            rows={3}
-            defaultValue={undefined}
+            name={zo.fields.content()}
+            defaultValue={initialFormState.content}
           />
-          {/* Exibe o Textarea para edição de conteúdo da postagem */}
+          {zo.errors.content((error) => (
+            <ErrorMessage>{error.message}</ErrorMessage>
+          ))}
         </div>
-        <div className="flex justify-end items-center px-2">
-          <Button type="submit" typeClass="edit">
-            {texts.submit}
-          </Button>
-          {/* Renderiza um botão de envio do formulário */}
-        </div>
+        <Button type="submit">{texts.submit}</Button>
       </form>
     </Card>
   );

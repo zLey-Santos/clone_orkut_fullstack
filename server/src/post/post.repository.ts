@@ -1,5 +1,4 @@
 import { prisma } from "../prisma";
-import { UnauthorizedError } from "routing-controllers";
 import type { CreatePostDto } from "./dtos/create-post.dto";
 import type { UpdatePostDto } from "./dtos/update-post.dto";
 import type { CreatePostCommentDto } from "./dtos/create-post-comment.dto";
@@ -66,23 +65,22 @@ export class PostRepository {
     const post = await prisma.posts.findUnique({
       where: {
         id: postId
+      },
+      include: {
+        users: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar: true
+          }
+        }
       }
     });
     return post;
   }
 
   async updatePost(postId: number, data: UpdatePostDto) {
-    const maybePost = await prisma.posts.findUnique({
-      where: {
-        id: postId,
-        user_id: data.user_id
-      }
-    });
-
-    if (maybePost === null) {
-      throw new UnauthorizedError("Você precisa ser o dono da publicação para editá-la. GOTCHA!");
-    }
-
     const post = await prisma.posts.update({
       data: {
         content: data.content

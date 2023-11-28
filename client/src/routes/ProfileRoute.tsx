@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card } from "../components/Card";
-import { Link } from "react-router-dom";
+import { useGlobalStore } from "../useGlobalStore";
 import { api } from "../api";
+import { AvatarCard } from "../components/AvatarCard";
+import { FriendsCard } from "../components/FriendsCard";
+import { Card } from "../components/Card";
+import { Button } from "../components/Button";
+import toast from "react-simple-toasts";
 
 const initialUser = {
   id: 0,
@@ -16,7 +20,10 @@ const initialUser = {
 export function ProfileRoute() {
   const params = useParams();
   const userId = params.id;
+  const isAuthorized = useGlobalStore((state) => state.isAuthorized);
+  const myself = useGlobalStore((state) => state.user);
   const [user, setUser] = useState({ ...initialUser, id: userId });
+  const [isFriend, setIsFriend] = useState(null as null | boolean);
 
   async function loadUser() {
     const response = await api.get(`/users/${userId}`);
@@ -24,9 +31,36 @@ export function ProfileRoute() {
     setUser(user);
   }
 
+  async function checkIsFriend() {
+    const response = await api.get(`/users/check-is-friend/${userId}`);
+    setIsFriend(response.data.isFriend);
+  }
+
+  async function addFriend() {
+    const response = await api.post(`/users/add-friend/${user.id}`);
+    if (response !== undefined) {
+      toast("Amigo adicionado com sucesso!");
+      setIsFriend(true);
+    }
+  }
+
+  async function removeFriend() {
+    const response = await api.post(`/users/remove-friend/${user.id}`);
+    if (response !== undefined) {
+      toast("Amigo removido com sucesso!");
+      setIsFriend(false);
+    }
+  }
+
   useEffect(() => {
     loadUser();
   }, [userId]);
+
+  useEffect(() => {
+    if (isAuthorized) {
+      checkIsFriend();
+    }
+  }, [isAuthorized, userId]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-2 m-2 sm:mx-auto max-w-screen-sm lg:max-w-screen-lg lg:mx-auto">
@@ -34,73 +68,29 @@ export function ProfileRoute() {
         <AvatarCard {...user} />
       </div>
       <div className="flex-1 flex flex-col gap-2">
-        <ProfileCard {...user} />
+        <Card>
+          {isFriend !== null && (
+            <div className="flex gap-2 mb-2">
+              {isFriend === false && (
+                <Button onClick={addFriend} className="bg-pink-500 hover:bg-pink-600">
+                  Adicionar como amigo
+                </Button>
+              )}
+              {isFriend === true && (
+                <Button onClick={removeFriend} className="bg-gray-300 hover:bg-gray-400 text-black">
+                  Remover amigo
+                </Button>
+              )}
+            </div>
+          )}
+          <h2 className="text-2xl font-bold">
+            {user.first_name} {user.last_name}
+          </h2>
+        </Card>
       </div>
       <div className="lg:max-w-[256px]">
         <FriendsCard {...user} />
       </div>
     </div>
-  );
-}
-
-function AvatarCard({ id, avatar, first_name, last_name }) {
-  return (
-    <Card>
-      <img src={avatar} alt={`Foto de ${first_name}`} />
-      <Link to={`/perfil/${id}`} className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
-        {first_name} {last_name}
-      </Link>
-    </Card>
-  );
-}
-
-function ProfileCard({ first_name, last_name }) {
-  return (
-    <Card>
-      <h2 className=" ml-6 text-2xl w-full font-bold">
-        {first_name} {last_name}
-      </h2>
-    </Card>
-  );
-}
-
-const initialFriends = [];
-
-function FriendsCard({ id }) {
-  const [friends, setFriends] = useState(initialFriends);
-
-  async function loadFriends() {
-    try {
-      const response = await api.get(`/users/${id}/friends`);
-      const friends = response.data;
-      setFriends(friends);
-    } catch (error) {
-      console.error("Error loading friends:", error);
-      // Adicione aqui a lógica para lidar com o erro, como exibir uma mensagem de erro na interface do usuário.
-    }
-  }
-
-  useEffect(() => {
-    loadFriends();
-  }, [id]);
-
-  return (
-    <Card>
-      <h2 className="lowercase font-bold">Amigos</h2>
-      <div className="flex flex-row flex-wrap">
-        {friends.map((friend) => (
-          <div className="w-1/3 p-1 box-border text-center">
-            <Link to={`/perfil/${friend.id}`}>
-              <img src={friend.avatar} alt={`Foto de ${friend.first_name}`} className="w-full" />
-            </Link>
-            <Link
-              to={`/perfil/${friend.id}`}
-              className="text-sky-600 hover:text-sky-700 font-bold text-sm hover:underline leading-tight">
-              {friend.first_name}
-            </Link>
-          </div>
-        ))}
-      </div>
-    </Card>
   );
 }

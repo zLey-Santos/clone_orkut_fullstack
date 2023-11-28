@@ -1,8 +1,19 @@
-import { JsonController, Get, Post, Param, Body, Authorized, CurrentUser, UploadedFile } from "routing-controllers";
+import {
+  JsonController,
+  Get,
+  Post,
+  Param,
+  Body,
+  Authorized,
+  CurrentUser,
+  UploadedFile,
+  Patch
+} from "routing-controllers";
 import { UserRepository } from "./user.repository";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { User } from "./user.types";
+import { UpdateUserDto } from "./dtos/update-user.dto";
 
 @JsonController("/users")
 export class UserController {
@@ -13,12 +24,6 @@ export class UserController {
 
   userRepository: UserRepository;
   userService: UserService;
-
-  @Post()
-  async createUser(@Body() body: CreateUserDto) {
-    const user = await this.userRepository.createUser(body);
-    return user;
-  }
 
   @Get("/:userId")
   async getById(@Param("userId") userId: number) {
@@ -37,5 +42,33 @@ export class UserController {
   async uploadAvatar(@UploadedFile("avatar") avatar: Express.Multer.File, @CurrentUser() user: User) {
     const response = await this.userService.uploadAvatar(user.id, avatar);
     return response;
+  }
+
+  @Authorized()
+  @Patch("/update-myself")
+  async updateMyself(@CurrentUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+    const nextUser = await this.userRepository.updateUser(user.id, updateUserDto);
+    return nextUser;
+  }
+
+  @Authorized()
+  @Post("/add-friend/:friendId")
+  async addFriend(@Param("friendId") friendId: number, @CurrentUser() user: User) {
+    const friend = await this.userService.addFriend(user.id, friendId);
+    return friend;
+  }
+
+  @Authorized()
+  @Post("/remove-friend/:friendId")
+  async removeFriend(@Param("friendId") friendId: number, @CurrentUser() user: User) {
+    const friend = await this.userService.removeFriend(user.id, friendId);
+    return friend;
+  }
+
+  @Authorized()
+  @Get("/check-is-friend/:friendId")
+  async checkIsFriend(@Param("friendId") friendId: number, @CurrentUser() user: User) {
+    const isFriend = await this.userRepository.checkIsFriend(user.id, friendId);
+    return { isFriend };
   }
 }

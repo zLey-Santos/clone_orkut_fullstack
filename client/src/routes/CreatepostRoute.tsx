@@ -1,68 +1,28 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useZorm } from "react-zorm";
 import toast from "react-simple-toasts";
+import { Helmet } from "react-helmet";
 import { Button } from "../components/Button";
 import { ErrorMessage } from "../components/ErrorMessage";
-import { api } from "../api";
-import { PostSchema } from "../postSchema.ts";
 import { Breadcrumbs } from "../components/Breadcrumbs";
 import { Card } from "../components/Card";
-import { Helmet } from "react-helmet";
-import { Textarea } from "../components/TextArea";
-import { DEFAULT_USER_ID } from "../defaltUserId.ts";
+import { api } from "../api";
+import { PostSchema } from "../postSchema";
 
 export function CreatePostRoute() {
   const navigate = useNavigate();
-
-  // Inicializa o Zorm para gerenciar o formulário com PostSchema
   const zo = useZorm("create-post", PostSchema, {
     async onValidSubmit(event) {
       event.preventDefault();
-      console.log("Validando zo");
-
-      try {
-        // Envia os dados do formulário para a API
-        const response = await api.post("/posts", { ...event.data, user_id: DEFAULT_USER_ID });
-
-        // Verifica se a publicação foi criada com sucesso
-        if (response.data.id) {
-          toast("Sua publicação foi criada com sucesso!");
-          // Redireciona para a página inicial após a criação da publicação
-          navigate("/");
-        } else {
-          toast("Houve um erro ao criar a sua publicação. :(");
-        }
-      } catch (error) {
-        console.error("Ocorreu um erro ao criar sua publicação:", error);
-        toast("Ocorreu um erro ao criar a sua publicação. :(");
+      const response = await api.post("/posts", event.data);
+      if (response.data.id) {
+        toast("Sua publicação foi criada com sucesso!");
+        navigate("/");
+      } else {
+        toast("Houve um erro ao criar a sua publicação. :(");
       }
     }
   });
-
-  // Função para obter a classe CSS com base nos erros do Zorm
-  const getClassNameInput = (fieldName: string): string => {
-    if (zo.errors[fieldName]()) {
-      return "border-red-500 focus:border-red-900";
-    }
-    return "focus:border-sky-500";
-  };
-
-  // Estado para controlar o conteúdo do textarea
-  const [content, setContent] = useState("");
-
-  // Função para lidar com o envio do formulário
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    try {
-      // Parseia o conteúdo do textarea usando o esquema de validação PostSchema
-      PostSchema.parse({ content });
-    } catch (error) {
-      // Se os dados forem inválidos, exiba uma mensagem de erro
-      console.error(error);
-    }
-  };
 
   return (
     <Card>
@@ -72,33 +32,28 @@ export function CreatePostRoute() {
       <Breadcrumbs
         links={[
           { href: "/", label: "Home" },
-          { href: "", label: "Criar publicação" }
+          {
+            href: "/criar-publicacao",
+            label: "Criar publicação"
+          }
         ]}
       />
-      <form onSubmit={handleSubmit} ref={zo.ref} className="flex flex-col gap-2 m-2 md:max-w-screen-md md:mx-auto">
+      <form ref={zo.ref} className="flex flex-col gap-2">
         <h1 className="text-center font-bold text-2xl">Criar publicação</h1>
-
         <div className="flex flex-col">
-          <Textarea
-            placeholder="Digite sua publicação"
+          <textarea
+            placeholder="Digite a sua publicação"
             rows={3}
             name={zo.fields.content()}
-            className={`rounded-lg p-2 border focus:border-sky-500 outline-none resize-none w-full
-            ${getClassNameInput("content")}`}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            defaultValue={undefined}
+            className={`rounded-lg px-2 py-1 border focus:border-green-500 outline-none resize-none w-full ${zo.errors.content(
+              "border-red-500 focus:border-red-600"
+            )}`}
           />
-
-          {/* Exibe mensagens de erro relacionadas ao campo "content" do Zorm */}
           {zo.errors.content((error) => (
             <ErrorMessage>{error.message}</ErrorMessage>
           ))}
         </div>
-
-        <Button type="submit" typeClass="submit">
-          Criar publicação
-        </Button>
+        <Button type="submit">Enviar</Button>
       </form>
     </Card>
   );

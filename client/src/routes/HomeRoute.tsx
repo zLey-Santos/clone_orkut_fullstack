@@ -1,36 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { FaSpinner } from "react-icons/fa";
-import { Card } from "../components/Card";
-import { Pagination } from "../components/pagination";
-import { api } from "../api";
-import { IPost, IResponseGetPost } from "../interfaces/IPost";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { LinkButton } from "../components/LinkButton";
+import { Card } from "../components/Card";
+import { api } from "../api";
 
-// Definição de valores iniciais e constantes
-const initialPosts = {
+const pageSize = 30;
+
+const initialPostsList = {
   count: 0,
   posts: []
 };
-const initialLoading = true;
 const initialSearch = "";
 const initialOrderBy = "desc";
-const pageSize = 10;
 
 export function HomeRoute() {
-  const params = useParams();
-  const [postsList, setPostsList] = useState(initialPosts);
+  const [postsList, setPostsList] = useState(initialPostsList);
   const [search, setSearch] = useState(initialSearch);
   const [orderBy, setOrderBy] = useState(initialOrderBy);
-  const page = parseInt(params.page, 10) || 1;
-  const offset = (page - 1) * pageSize;
-  const [posts, setPosts] = useState(initialPosts);
-  const [loading, setLoading] = useState(initialLoading);
-
-  const [currentPage, setCurrentPage] = useState(1);
   const pageCount = Math.ceil(postsList.count / pageSize);
+  const pages = new Array(pageCount).fill(null).map((_, index) => index + 1);
 
-  // Função assíncrona para carregar os posts
   async function loadPosts() {
     const response = await api.get(`/posts`, {
       params: {
@@ -42,48 +32,19 @@ export function HomeRoute() {
     setPostsList(nextPosts);
   }
 
-  // Função assíncrona para buscar os posts paginados
-  async function fetchPosts() {
-    const response = await api.get<IResponseGetPost>(`/posts?limit=${pageSize}&offset=${offset}`);
-    const fetchedPosts = response.data;
-    setPosts(fetchedPosts);
-    setLoading(false);
-  }
-
-  // Efeito para buscar os posts e atualizar a lista de posts
   useEffect(() => {
-    fetchPosts();
     loadPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, orderBy]);
+  }, []);
 
-  // Efeito para rolar a página para o topo quando a pesquisa ou a ordem mudar
   useEffect(() => {
-    window.scrollTo(0, 0);
+    loadPosts();
   }, [search, orderBy]);
-
-  // Função para dividir os posts em páginas de tamanho fixo
-  function paginate(array: IPost[], pageSize: number, pageNumber: number) {
-    return array.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
-  }
-
-  // Gere os posts para a página atual
-  const paginatedPosts = paginate(postsList.posts, pageSize, currentPage);
 
   return (
     <Card>
       <Helmet>
-        <title>Orkut | Pub's. Recentes</title>
+        <title>Home | Orkut</title>
       </Helmet>
-
-      {/* Exibe um ícone de carregamento enquanto os dados são buscados */}
-      {loading && (
-        <div className="flex justify-center">
-          <FaSpinner className="text-4xl animate-spin" />
-        </div>
-      )}
-
-      {/* Barra de pesquisa e seleção de ordenação */}
       <div className="flex gap-2">
         <input
           type="search"
@@ -101,12 +62,8 @@ export function HomeRoute() {
           <option value="asc">Mais antigas</option>
         </select>
       </div>
-
-      {/* Exibe uma mensagem se nenhum resultado for encontrado */}
-      {postsList.posts.length === 0 && !loading && "Nenhum resultado encontrado"}
-
-      {/* Mapeia e exibe os posts paginados */}
-      {paginatedPosts.map((post) => {
+      {postsList.posts.length === 0 && "Nenhum resultado encontrado"}
+      {postsList.posts.map((post) => {
         return (
           <div key={post.id} className="border-b py-2">
             <div className="flex items-center gap-2">
@@ -120,26 +77,25 @@ export function HomeRoute() {
               <div className="flex flex-col">
                 <Link
                   to={`/perfil/${post.user_id}`}
-                  className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
+                  className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
                   {post.users.first_name} {post.users.last_name}
                 </Link>
                 <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
               </div>
             </div>
-            <Link to={`/view-post/${post.id}`} className="cursor-pointer block">
+            <Link to={`/ver-publicacao/${post.id}`} className="cursor-pointer block">
               <p>{post.content}</p>
             </Link>
           </div>
         );
       })}
-
-      {/* Exibe a paginação */}
-      <Pagination
-        pageCount={pageCount}
-        currentPage={currentPage}
-        basePath="/posts"
-        onPageChange={(page: number) => setCurrentPage(page)} // Atualiza a página atual
-      />
+      <div className="flex flex-row gap-2 flex-wrap pt-4">
+        {pages.map((page) => (
+          <LinkButton key={page} to={`/publicacoes/${page}`}>
+            {page}
+          </LinkButton>
+        ))}
+      </div>
     </Card>
   );
 }

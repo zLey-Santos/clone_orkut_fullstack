@@ -23,33 +23,22 @@ export function SignUpRoute() {
 
   async function submitForm(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    try {
-      const response = await api.post("/auth/sign-up", form);
-
-      // Verifica se a resposta não é undefined e se a propriedade 'data' está presente na resposta
-      if (response && response.data) {
-        const { token, user } = response.data;
-        TokenStorage.setToken(token);
-        setIsAuthorized(true);
-        setUser({
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          avatar: user.avatar
-        });
-        navigate("/user");
-        toast(`Seja bem-vindo, ${user.first_name}! Sua conta foi criada com sucesso!`);
-      } else {
-        // Se a resposta não tiver 'data', pode ser tratado como um erro de login
-        toast("Erro ao criar conta. Verifique suas informações e tente novamente.");
-      }
-    } catch (error) {
-      // Lidar com erros durante a solicitação
-      console.error("Erro durante a solicitação:", error);
-      toast("Erro ao criar conta. Tente novamente mais tarde.");
+    const response = await api.post("/auth/sign-up", form);
+    if (response === undefined) {
+      return;
     }
+    const { token, user } = response.data;
+    TokenStorage.setToken(token);
+    setIsAuthorized(true);
+    setUser({
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      avatar: user.avatar
+    });
+    navigate("/usuario");
+    toast(`Seja bem-vinde, ${user.first_name}! Sua conta foi criada com sucesso!`);
   }
 
   return (
@@ -74,9 +63,7 @@ export function SignUpRoute() {
             defaultText="Senha"
             type="password"
           />
-          <Button type="submit" typeClass="logout">
-            Enviar
-          </Button>
+          <Button type="submit">Enviar</Button>
         </form>
       </Card>
     </div>

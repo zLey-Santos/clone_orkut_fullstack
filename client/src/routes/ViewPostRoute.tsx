@@ -1,102 +1,51 @@
 import { useEffect, useState } from "react";
 import toast from "react-simple-toasts";
+import { Helmet } from "react-helmet";
 import { api } from "../api";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useGlobalStore } from "../useGlobalStore";
 import { Card } from "../components/Card";
 import { Title } from "../components/Title";
 import { Button } from "../components/Button";
-import { IPost } from "../interfaces/IPost";
-import { FaTrashAlt } from "react-icons/fa";
-import { AiOutlineEdit } from "react-icons/ai";
+import { LinkButton } from "../components/LinkButton";
 import { Breadcrumbs } from "../components/Breadcrumbs";
-import { Helmet } from "react-helmet";
-import { Textarea } from "../components/TextArea";
-import { createPostCommentSchema } from "../commentSchema.ts";
-import { DEFAULT_USER_ID } from "../defaltUserId.ts";
 
 const texts = {
-  commentsTitle: "Comentário",
-  commentsSendButton: "Comentar",
-  starRatingButton: "Classificar"
+  commentsTitle: "Comentários",
+  commentsSendButton: "Enviar"
 };
 
-// Define o estado inicial para uma postagem
-const initialPostState: IPost = {
+const initialPost = {
   id: 0,
   content: "",
   created_at: "",
-  count: 0,
-  initialPosts: "",
   user_id: 0,
   users: {
-    avatar: "",
+    id: 0,
+    avatar: "/default-avatar.png",
+    first_name: "",
     last_name: ""
-  },
-  users_avatar: "",
-  users_last_name: ""
+  }
 };
 
-// Define os estados iniciais para comentários
 const initialComments = [];
 const initialComment = "";
 
 export function ViewPostRoute() {
+  const isAuthorized = useGlobalStore((state) => state.isAuthorized);
+  const user = useGlobalStore((state) => state.user);
   const params = useParams();
   const navigate = useNavigate();
-  const [post, setPost] = useState<IPost>(initialPostState);
+  const [post, setPost] = useState(initialPost);
   const [comments, setComments] = useState(initialComments);
   const [comment, setComment] = useState(initialComment);
-  const [errors, setErrors] = useState({
-    message: ""
-  });
 
-  // Função assíncrona para buscar dados da postagem e seus comentários
-  async function fetchData() {
-    try {
-      const [postResponse, commentsResponse] = await Promise.all([
-        api.get(`/posts/${params.id}`),
-        api.get(`/posts/${params.id}/comments`)
-      ]);
-      setPost(postResponse.data);
-      setComments(commentsResponse.data);
-    } catch (error) {
-      navigate("/not-found-page"); // Redireciona para a página de erro se não encontrar a postagem
-    }
+  async function loadPost() {
+    const response = await api.get(`/posts/${params.id}`);
+    const nextPost = response.data;
+    setPost(nextPost);
   }
 
-  // Função assíncrona para carregar os comentários da postagem
-  async function loadComments() {
-    const response = await api.get(`/posts/${params.id}/comments`);
-    const comments = response.data;
-    setComments(comments);
-  }
-
-  // Função para criar um comentário na postagem
-  async function createComment() {
-    try {
-      const commentData = {
-        message: comment,
-        user_id: DEFAULT_USER_ID
-      };
-
-      const validationResult = createPostCommentSchema.safeParse(commentData);
-
-      if (validationResult.success) {
-        await api.post(`/posts/${params.id}/comments`, validationResult.data);
-        await loadComments();
-        setComment("");
-      } else {
-        const errorMessage = validationResult.error?.errors[0]?.message;
-        if (errorMessage) {
-          toast(errorMessage);
-        }
-      }
-    } catch (error) {
-      toast("Erro ao criar o comentário:", error.message);
-    }
-  }
-
-  // Função para excluir a postagem
   async function deletePost() {
     const response = await api.delete(`/posts/${params.id}`);
     if (response.data.id) {
@@ -107,7 +56,18 @@ export function ViewPostRoute() {
     }
   }
 
-  // Função para lidar com o envio de comentário
+  async function loadComments() {
+    const response = await api.get(`/posts/${params.id}/comments`);
+    const comments = response.data;
+    setComments(comments);
+  }
+
+  async function createComment() {
+    const response = await api.post(`/posts/${params.id}/comments`, {
+      message: comment
+    });
+  }
+
   async function onCommentSubmit(event) {
     event.preventDefault();
     await createComment();
@@ -115,66 +75,88 @@ export function ViewPostRoute() {
   }
 
   useEffect(() => {
-    fetchData(); // Carrega os dados da postagem ao montar o componente
+    loadPost();
+    loadComments();
   }, [params.id]);
 
-  const postTitleId = `Publicação #${post.id}`;
+  const pageTitle = `Ver publicação #${post.id}`;
 
   return (
     <>
       <Card>
         <Helmet>
-          <title>{postTitleId}</title>
+          <title>{pageTitle}</title>
         </Helmet>
-        <Breadcrumbs links={[{ href: "/", label: "Home" }, { label: `Ver publicação #${params.id}` }]} />
-
-        <div className="flex justify-end gap-3">
-          {/* Botão para editar a postagem */}
-          <Button typeClass="edit" to={`/edit-post/${params.id}`}>
-            <span className="uppercase mr-3 font-bold ">Editar</span>
-            <AiOutlineEdit />
-          </Button>
-
-          {/* Botão para deletar a postagem */}
-          <Button typeClass="danger" onClick={deletePost}>
-            <span className="uppercase mr-3 font-bold">Delete</span>
-            <FaTrashAlt />
-          </Button>
-        </div>
-
-        <div className="text-gray-500 mb-2 ">#{post.id}</div>
-        <div className="text-gray-500 ">{new Date(post.created_at).toLocaleDateString()}</div>
-
-        <p className={"break-words"}>{post.content}</p>
-      </Card>
-
-      <Card>
-        <Title> {texts.commentsTitle} </Title>
-
-        <form onSubmit={onCommentSubmit} className="mt-3">
-          <Textarea
-            className={`rounded-lg p-2  border focus:border-sky-500 outline-none resize-none w-full`}
-            value={comment}
-            placeholder="Digite o seu comentário"
-            rows={3}
-            name={undefined}
-            onChange={(event) => setComment(event.target.value)}
-            defaultValue={undefined}
-          />
-          {errors.message && <div className="text-red-500">{errors.message}</div>}
-          <div className="flex justify-end mt-2">
-            {/* Botão para enviar o comentário */}
-            <Button
-              className="bg-sky-500 mb-2 uppercase mr-3 font-bold hover:bg-sky-700 "
-              typeClass="edit"
-              type="submit">
-              {texts.commentsSendButton}
+        <Breadcrumbs
+          links={[
+            { href: "/", label: "Home" },
+            {
+              href: `/ver-publicacao/${params.id}`,
+              label: `Ver publicação #${params.id}`
+            }
+          ]}
+        />
+        {isAuthorized && user.id === post.user_id && (
+          <div className="flex gap-2">
+            <Button className="bg-red-500 hover:bg-red-700" onClick={deletePost}>
+              Deletar
             </Button>
+            <LinkButton className="bg-amber-500 hover:bg-amber-700" to={`/editar-publicacao/${params.id}`}>
+              Editar
+            </LinkButton>
           </div>
-        </form>
-
+        )}
+        <div className="flex items-center gap-2">
+          <Link to={`/perfil/${post.user_id}`}>
+            <img
+              src={post.users.avatar}
+              alt={`Foto de ${post.users.first_name} ${post.users.last_name}`}
+              className="w-[48px] h-[48px] rounded-full"
+            />
+          </Link>
+          <div className="flex flex-col">
+            <Link
+              to={`/perfil/${post.user_id}`}
+              className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+              {post.users.first_name} {post.users.last_name}
+            </Link>
+            <span className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</span>
+          </div>
+        </div>
+        <p>{post.content}</p>
+      </Card>
+      <Card>
+        <Title>{texts.commentsTitle}</Title>
+        {isAuthorized && (
+          <form onSubmit={onCommentSubmit} className="mt-2">
+            <textarea
+              placeholder="Digite o seu comentário"
+              rows={3}
+              className={`rounded-lg px-2 py-1 border focus:border-green-500 outline-none resize-none w-full`}
+              value={comment}
+              onChange={(event) => setComment(event.target.value)}
+            />
+            <div className="flex justify-end mt-2">
+              <Button type="submit">{texts.commentsSendButton}</Button>
+            </div>
+          </form>
+        )}
+        {!isAuthorized && (
+          <div className="my-4">
+            <p>
+              Para comentar, você deve{" "}
+              <Link to="/entrar" className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+                entrar
+              </Link>{" "}
+              ou{" "}
+              <Link to="/criar-conta" className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+                criar uma conta
+              </Link>
+              .
+            </p>
+          </div>
+        )}
         <div>
-          {/* Mapeia e exibe os comentários */}
           {comments.map((comment) => (
             <div key={comment.id} className="border-b py-2">
               <div className="flex items-center gap-2">
@@ -188,23 +170,13 @@ export function ViewPostRoute() {
                 <div className="flex flex-col">
                   <Link
                     to={`/perfil/${comment.user_id}`}
-                    className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
+                    className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
                     {comment.users.first_name} {comment.users.last_name}
                   </Link>
-                  <span className="text-sm text-gray-500">#{comment.user_id}</span>
-                  <span className="text-sm text-gray-500">
-                    {new Date(comment.created_at).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}
-                    h
-                  </span>
+                  <span className="text-sm text-gray-500">{new Date(comment.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
-              <p>{comment.message}</p>
+              <p>{comment.content}</p>
             </div>
           ))}
         </div>

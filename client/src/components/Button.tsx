@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-type TTypeClass = "default" | "danger" | "edit" | "signIn" | "logout" | "submit";
+type TTypeClass = "default" | "danger" | "edit" | "signIn" | "logout" | "submit" | "exit";
 
 type ButtonProps = {
   type?: "submit" | "button" | "reset";
@@ -34,7 +34,9 @@ export function Button({ type, children, to, onClick, className = "", typeClass 
     danger:
       "text-[#fff] flex justify-center items-center bg-red-500 py-3 h-2 w-28 rounded-md border-2 border-[#222] hover:bg-red-700 hover:text-[#222]",
 
-    edit: "text-[#fff] flex justify-center items-center bg-amber-500 py-3 h-2 w-28 rounded-md border-2 border-[#222] hover:bg-amber-700 hover:text-[#222]"
+    edit: "text-[#fff] flex justify-center items-center bg-amber-500 py-3 h-2 w-28 rounded-md border-2 border-[#222] hover:bg-amber-700 hover:text-[#222]",
+
+    exit: "text-[#fff] flex justify-center items-center bg-red-500 py-3 h-2 w-28 rounded-md border-2 border-[#222] hover:bg-red-700 hover:text-[#222]"
   };
 
   return (

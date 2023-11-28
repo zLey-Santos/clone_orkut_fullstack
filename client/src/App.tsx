@@ -1,16 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppBar } from "./components/AppBar";
+import { UserAccountRoute } from "./routes/UserAccountRoute";
 import { HomeRoute } from "./routes/HomeRoute";
 import { CreatePostRoute } from "./routes/CreatepostRoute";
 import { ViewPostRoute } from "./routes/ViewPostRoute";
-import { NotFoundPage } from "./routes/NotFoundPage";
-import { Footer } from "./components/FooterComponent";
 import { EditPostRoute } from "./routes/EditPostRoute";
 import { PostPageRoute } from "./routes/PostPageRoute";
 import { ProfileRoute } from "./routes/ProfileRoute";
-import { UserAccountRoute } from "./routes/UserAccountRoute";
 import { SignInRoute } from "./routes/SignInRoute";
 import { SignUpRoute } from "./routes/SignUpRoute";
+import { UpdateProfileRoute } from "./routes/UploadProfileRoute";
 import { LoadUser } from "./components/LoadUser";
 
 export default function App() {
@@ -21,17 +20,16 @@ export default function App() {
         <AppBar />
         <Routes>
           <Route path="/" element={<HomeRoute />} />
-          <Route path="/user" element={<UserAccountRoute />} />
-          <Route path="/create-post" element={<CreatePostRoute />} />
-          <Route path="/view-post/:id" element={<ViewPostRoute />} />
-          <Route path="/edit-post/:id" element={<EditPostRoute />} />
-          <Route path="/not-found-page" element={<NotFoundPage />} />
-          <Route path="/posts/:page" element={<PostPageRoute />} />
+          <Route path="/usuario" element={<UserAccountRoute />} />
+          <Route path="/criar-publicacao" element={<CreatePostRoute />} />
+          <Route path="/ver-publicacao/:id" element={<ViewPostRoute />} />
+          <Route path="/editar-publicacao/:id" element={<EditPostRoute />} />
+          <Route path="/publicacoes/:page" element={<PostPageRoute />} />
           <Route path="/perfil/:id" element={<ProfileRoute />} />
-          <Route path="/sign-in" element={<SignInRoute />} />
-          <Route path="/sign-up" element={<SignUpRoute />} />
+          <Route path="/atualizar-perfil" element={<UpdateProfileRoute />} />
+          <Route path="/entrar" element={<SignInRoute />} />
+          <Route path="/criar-conta" element={<SignUpRoute />} />
         </Routes>
-        <Footer className={"flex justify-end items-center gap-2  bg-[#222]"} />
       </div>
     </BrowserRouter>
   );

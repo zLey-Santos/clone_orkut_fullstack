@@ -39,27 +39,32 @@ export function AppBar() {
     <header className="bg-[#222] p-2 shadow-md flex flex-row justify-between">
       <div className="flex flex-row items-center gap-8">
         <Logo />
-        <Link to={"/"}>
-          <img src="/src/assets/img-fiveIcons/orkut.png" alt="orkut" className="h-6 w-20 rounded-md ml-3 " />
+        <img src="../assets/img-fiveIcons/orkut.png" alt="" />
+        <Link
+          to="/"
+          className="bg-[#EF0092] hover:[#ef0093a5] text-white font-bold uppercase mr-3 p-2
+      px-3 rounded-md hover:text-black">
+          Home
         </Link>
         {isLoading && <FaSpinner className="animate-spin text-2xl" />}
       </div>
       {isAuthorized && (
-        <div className="flex flex-row items-center gap-4 ">
-          <LinkButton to="/create-post">Criar publicação</LinkButton>
-          <Button typeClass="logout" onClick={logout}>
+        <div className="flex flex-row items-center gap-4">
+          <LinkButton to="/criar-publicacao">Criar publicação</LinkButton>
+          <LinkButton to="/atualizar-perfil">Atualizar perfil</LinkButton>
+          <Button onClick={logout} className="exit">
             Sair
           </Button>
-          <Link to="/user" className="flex flex-row items-center gap-2">
+          <Link to="/usuario" className="flex flex-row items-center gap-2">
             {user.first_name} {user.last_name}
-            <img src={user.avatar} alt="" className="w-12 h-12 rounded-full" />
+            <img src={user.avatar} className="w-12 h-12 rounded-full" />
           </Link>
         </div>
       )}
       {!isAuthorized && (
-        <div className="flex flex-row items-center gap-4 p-2">
-          <LinkButton to="/sign-in">Entrar</LinkButton>
-          <LinkButton to="/sign-up">Criar conta</LinkButton>
+        <div className="flex flex-row items-center gap-4">
+          <LinkButton to="/entrar">Entrar</LinkButton>
+          <LinkButton to="/criar-conta">Criar conta</LinkButton>
         </div>
       )}
     </header>
@@ -70,10 +75,11 @@ function Logo() {
   return (
     <Link to="/" className="flex flex-row items-center gap-2" title="Orkut">
       <img
-        alt=""
+        alt="Orkut"
         src="/orkut.png"
         style={{
-          height: "22px"
+          height: "22px",
+          marginLeft: "25px"
         }}
       />
     </Link>

@@ -13,6 +13,7 @@ import {
   CurrentUser
 } from "routing-controllers";
 import { PostRepository } from "./post.repository";
+import { PostService } from "./post.service";
 import { CreatePostDto } from "./dtos/create-post.dto";
 import { UpdatePostDto } from "./dtos/update-post.dto";
 import { CreatePostCommentDto } from "./dtos/create-post-comment.dto";
@@ -21,9 +22,11 @@ import { CreatePostCommentDto } from "./dtos/create-post-comment.dto";
 export class PostController {
   constructor() {
     this.postRepository = new PostRepository();
+    this.postService = new PostService();
   }
 
   postRepository: PostRepository;
+  postService: PostService;
 
   @Get()
   async getAll(
@@ -59,7 +62,7 @@ export class PostController {
   @Authorized()
   @Delete("/:id")
   async deleteById(@Param("id") postId: number, @CurrentUser() user: User) {
-    const post = await this.postRepository.deletePost(postId);
+    const post = await this.postService.deletePost(postId, user.id);
     return post;
   }
 
@@ -67,7 +70,7 @@ export class PostController {
   @Put("/:id")
   async updateById(@Param("id") postId: number, @Body() body: UpdatePostDto, @CurrentUser() user: User) {
     body.user_id = user.id;
-    const post = await this.postRepository.updatePost(postId, body);
+    const post = await this.postService.updatePost(postId, body);
     return post;
   }
 
