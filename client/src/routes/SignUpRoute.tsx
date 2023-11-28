@@ -7,6 +7,7 @@ import { TextField } from "../components/TextField";
 import { api } from "../api";
 import { TokenStorage } from "../tokenStorage";
 import { useGlobalStore } from "../useGlobalStore";
+import { PasswordField } from "../components/PasswordField";
 
 const initialForm = {
   first_name: "",
@@ -57,11 +58,12 @@ export function SignUpRoute() {
             defaultText="Sobrenome"
           />
           <TextField value={form.email} onChange={(email) => setForm({ ...form, email })} defaultText="Email" />
-          <TextField
+
+          <PasswordField
+            type="password"
+            defaultText={"Senha"}
             value={form.password}
             onChange={(password) => setForm({ ...form, password })}
-            defaultText="Senha"
-            type="password"
           />
           <Button type="submit" typeClass="submit">
             Enviar

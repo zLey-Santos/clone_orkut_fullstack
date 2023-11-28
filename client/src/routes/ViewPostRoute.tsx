@@ -149,12 +149,12 @@ export function ViewPostRoute() {
         {!isAuthorized && (
           <div className="my-4">
             <p>
-              Para comentar, você deve
-              <Link to="/entrar" className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
-                entrar
+              Para comentar, você deve <></>
+              <Link to="/entrar " className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
+                entrar <></>
               </Link>
-              ou
-              <Link to="/criar-conta" className="text-blue-600 hover:text-blue-800 hover:underline font-bold">
+              ou <></>
+              <Link to="/criar-conta" className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                 criar uma conta
               </Link>
             </p>
@@ -177,12 +177,15 @@ export function ViewPostRoute() {
                     className="text-sky-600 hover:text-sky-800 hover:underline font-bold">
                     {comment.users.first_name} {comment.users.last_name}
                   </Link>
+
                   <span className="text-sm text-sky-700 font-bold">
                     {new Date(comment.created_at).toLocaleDateString()}
                   </span>
                 </div>
               </div>
-              <p>{comment.content}</p>
+              <Card>
+                <p>{comment.message}</p>
+              </Card>
             </div>
           ))}
         </div>

@@ -7,6 +7,7 @@ import { TextField } from "../components/TextField";
 import { api } from "../api";
 import { TokenStorage } from "../tokenStorage";
 import { useGlobalStore } from "../useGlobalStore";
+import { PasswordField } from "../components/PasswordField";
 
 const initialForm = {
   email: "",
@@ -45,11 +46,11 @@ export function SignInRoute() {
         <h2 className="text-center text-2xl mb-3">Entrar na sua conta</h2>
         <form onSubmit={submitForm} className="flex flex-col gap-2 w-full">
           <TextField value={form.email} onChange={(email) => setForm({ ...form, email })} defaultText="Email" />
-          <TextField
+          <PasswordField
+            type="password"
+            defaultText={"Senha"}
             value={form.password}
             onChange={(password) => setForm({ ...form, password })}
-            defaultText="Senha"
-            type="password"
           />
           <Button type="submit" typeClass="submit">
             Entrar

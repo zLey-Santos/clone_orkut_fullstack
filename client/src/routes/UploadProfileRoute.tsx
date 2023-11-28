@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-simple-toasts";
 import { Helmet } from "react-helmet";
 import { Button } from "../components/Button";
-import { ErrorMessage } from "../components/ErrorMessage";
 import { Breadcrumbs } from "../components/Breadcrumbs";
 import { Card } from "../components/Card";
 import { TextField } from "../components/TextField";
 import { api } from "../api";
 import { useGlobalStore } from "../useGlobalStore";
+import { PasswordField } from "../components/PasswordField";
 
 export function UpdateProfileRoute() {
   const navigate = useNavigate();
@@ -78,13 +78,15 @@ export function UpdateProfileRoute() {
           Enviar
         </Button>
         <h2 className="font-bold text-xl mt-4">Segurança (atualizar senha)</h2>
-        <TextField value={password} type="password" onChange={setPassword} defaultText="Senha" />
-        <TextField
-          value={confirmPassword}
+
+        <PasswordField type="password" defaultText={"Nova senha"} value={password} onChange={setPassword} />
+        <PasswordField
           type="password"
-          onChange={setConfirmPassword}
           defaultText="Confirmar senha"
+          value={confirmPassword}
+          onChange={setConfirmPassword}
         />
+
         <Button type="submit" typeClass="submit">
           Alterar agora
         </Button>
