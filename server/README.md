@@ -1,4 +1,38 @@
+<<<<<<< HEAD:server/README.md
 Guia de Funcionamento do Servidor - API de Social Media
+=======
+Projeto Orkut-SocialMedia
+Autor: Wesley Santos
+Tecnologias Usadas:
+
+    Node.js: Ambiente de execução JavaScript no lado do servidor.
+    Express: Framework web para Node.js, utilizado na construção de APIs RESTful.
+    Prisma: ORM (Object-Relational Mapping) para interação com o banco de dados SQL.
+    PostgreSQL: Sistema de gerenciamento de banco de dados relacional.
+    JWT (JSON Web Token): Padrão para token de acesso utilizado na autenticação.
+    Bcrypt: Biblioteca para hash de senhas.
+    Multer: Middleware para upload de arquivos.
+    Sharp: Biblioteca para manipulação de imagens, utilizado para redimensionamento.
+    Routing Controllers: Framework para facilitar a criação de controladores em aplicações Node.js.
+    Class Validator: Biblioteca para validação de dados em classes usando decorators.
+    Faker: Biblioteca para geração de dados fictícios para seed do banco de dados.
+    Express-static: Middleware para servir arquivos estáticos.
+    Reflect-metadata: Biblioteca para reflect-metadata para TypeScript.
+
+Instruções Necessárias:
+
+Para instalar as dependências:
+
+    npm install
+
+Scripts:
+
+Para iniciar o servidor Front-End /cliente || Back-End /server:
+
+    npm run dev
+
+    --Guia de Funcionamento do Servidor - API de Social Media--
+>>>>>>> 8cc3542c6f01678ea057655675f7514d72088ae6:README.md
 Checkers de Autorização e Usuário Atual
 
     authorizationChecker.ts: Verifica a autorização para ações específicas, utilizando o serviço JWT para extrair e validar o token do cabeçalho da solicitação.
