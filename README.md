@@ -28,8 +28,8 @@ Para iniciar o servidor Front-End /cliente || Back-End /server:
 
     npm run dev
 
-                    --Guia de Funcionamento do Servidor - API de Social Media --
 
+ --Guia de Funcionamento do Servidor - API de Social Media--
 Checkers de Autorização e Usuário Atual
 
     authorizationChecker.ts: Verifica a autorização para ações específicas, utilizando o serviço JWT para extrair e validar o token do cabeçalho da solicitação.
@@ -113,3 +113,4 @@ Observações Gerais:
     Uso de bcrypt para hash de senha.
     Upload de avatar usando Sharp para redimensionamento.
     Endpoints para interação com usuários, incluindo operações de amizade e atualização de perfil.
+
