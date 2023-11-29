@@ -79,7 +79,7 @@ Controlador e Serviço para Operações com Posts e Comentários
             deletePost(postId: number, userId: number): Promise<any>: Deleta um post se o usuário for o autor.
             updatePost(postId: number, data: UpdatePostDto): Promise<any>: Atualiza um post se o usuário for o autor.
 
-Controlador e Serviço para Operações com Usuários
+Controlador e Serviço para Operações com Usuários:
 
     UserController.ts: Controlador responsável por operações relacionadas a usuários.
         Endpoints:
