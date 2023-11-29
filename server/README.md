@@ -1,6 +1,5 @@
-<<<<<<< HEAD:server/README.md
 Guia de Funcionamento do Servidor - API de Social Media
-=======
+
 Projeto Orkut-SocialMedia
 Autor: Wesley Santos
 Tecnologias Usadas:
@@ -32,7 +31,7 @@ Para iniciar o servidor Front-End /cliente || Back-End /server:
     npm run dev
 
     --Guia de Funcionamento do Servidor - API de Social Media--
->>>>>>> 8cc3542c6f01678ea057655675f7514d72088ae6:README.md
+
 Checkers de Autorização e Usuário Atual
 
     authorizationChecker.ts: Verifica a autorização para ações específicas, utilizando o serviço JWT para extrair e validar o token do cabeçalho da solicitação.
