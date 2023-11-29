@@ -20,17 +20,13 @@ Instruções Necessárias:
 
 Para instalar as dependências:
 
-bash
-
-npm install
+    npm install
 
 Scripts:
 
 Para iniciar o servidor Front-End /cliente || Back-End /server:
 
-bash
-
-npm run dev
+    npm run dev
 
 Guia de Funcionamento do Servidor - API de Social Media
 Checkers de Autorização e Usuário Atual
