@@ -28,7 +28,6 @@ Para iniciar o servidor Front-End /cliente || Back-End /server:
 
     npm run dev
 
-
  --Guia de Funcionamento do Servidor - API de Social Media--
 Checkers de Autorização e Usuário Atual
 
