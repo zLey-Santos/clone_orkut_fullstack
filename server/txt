@@ -1,1 +1,0 @@
-//(Limpa todos dados do banco => npx prisma migrate reset)
