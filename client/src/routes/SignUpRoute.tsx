@@ -43,7 +43,7 @@ export function SignUpRoute() {
           avatar: user.avatar
         });
         navigate("/usuario");
-        toast(`Seja bem-vinde, ${user.first_name}! Sua conta foi criada com sucesso!`);
+        toast(`Seja bem-vindo, ${user.first_name}! Sua conta foi criada com sucesso!`);
       }
     } catch (error) {
       console.error("Error signing up:", error);
